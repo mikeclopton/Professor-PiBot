@@ -1,0 +1,53 @@
+/* login.css */
+.container {
+    display: flex;
+    justify-content: center; /* Centers items horizontally */
+    align-items: center; /* Centers items vertically */
+    height: 100vh; /* Full viewport height if you want full page centering */
+}
+
+.login {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+    padding: 20px;
+    width: 300px; /* Fixed width for the form */
+}
+
+.login-input {
+    display: flex;
+    flex-direction: column;
+}
+
+.login-input input {
+    margin-bottom: 10px;
+    padding: 10px;
+    border: 1px solid #ddd; /* Light border for inputs */
+    border-radius: 4px;
+    font-size: 16px;
+}
+
+.login-input button {
+    padding: 10px;
+    background-color: #007bff; /* Bootstrap primary color for button */
+    border: none;
+    border-radius: 4px;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.login-input button:hover {
+    background-color: #0056b3; /* Darker shade for hover effect */
+}
+
+/* Existing styles remain unchanged */
+
+.register-button {
+    margin-top: 10px; /* Space between the Login and Register buttons */
+    background-color: #28a745; /* Green color for the Register button */
+}
+
+.register-button:hover {
+    background-color: #218838; /* Darker green for hover effect */
+}
