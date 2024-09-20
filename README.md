@@ -15,25 +15,43 @@ To install Professor PiBot, follow these steps:
 
 1. Clone the repository:
 
-git clone https://github.com/mikeclopton/Professor-PiBot.git
+Go to https://github.com/mikeclopton/Professor-PiBot
 
-cd Professor-PiBot
+Click the green button <> Code dropdown and select "Open with GitHub Desktop"
+
+Create the folder on your PC
+
+Open in VSCode
 
 2. Set up the backend:
 
-cd backend
+Open a terminal
 
-python -m venv venv
+Make sure you are in Professor PiBot root folder
 
-venv\Scripts\activate
+In Terminal: cd backend
 
-pip install -r requirements.txt
+In Terminal: python -m venv venv
+
+In Terminal: venv\Scripts\activate
+
+--If you have an error regarding security, see these instructions:
+
+* Press Windows + X and open Windows Powershell (Admin)
+
+* Type Set-ExecutionPolicy RemoteSigned
+
+* Confirm change by entering Y
+
+* Go back to your original terminal and re-enter venv\Scripts\activate
+
+In Terminal: pip install -r requirements.txt
 
 3. Set up the frontend:
 
-cd ../frontend
+In Terminal: cd ../frontend
 
-npm install
+In Terminal: npm install
 
 ## Using Professor PiBot
 
@@ -41,19 +59,19 @@ To use Professor PiBot, follow these steps. Type directly into terminal:
 
 1. Build the frontend:
 
-cd frontend
+In Terminal: cd frontend (if not already in this directory)
 
-npm run build
+In Terminal: npm run build
 
-cd ..
+In Terminal: cd ..
 
 2. Start the backend server:
 
-cd backend
+In Terminal: cd backend
 
-venv\Scripts\activate
+In Terminal: venv\Scripts\activate (if not already running the virtual environment)
 
-python app.py
+In Terminal: python app.py
 
 3. Open a web browser and navigate to `http://127.0.0.1:5000`
 
