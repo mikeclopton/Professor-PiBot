@@ -71,55 +71,36 @@ On the repository page, make sure you're on the main branch (usually shown in a 
 
 Look for a message that says "This branch is up to date with main" to confirm you're seeing the latest version.
 
-3. Download the Code:
+3. Clone the Code (Must have GitHub Desktop Installed):
 
-Click the green "Code" button near the top-right of the repository page.
+- Open GitHub Desktop.
+- Click **File** > **Clone Repository**.
+- In the **URL** tab, paste the repository URL from GitHub.
+- Select the local path where you'd like to clone the repository.
+- Click **Clone**.
+-Alternatively, you can click on the green "<> Code" button and click "Open With GitHub Desktop" to clone
 
-Select "Download ZIP" from the dropdown menu.
+### 2. Make Your Changes:
+- Open the cloned repository's folder in your preferred code editor.
+- Make the desired changes to the code.
 
-Save and extract the ZIP file on your local machine.
+### 3. Create a New Branch and Upload Changes:
+- In GitHub Desktop, go to **Branch** > **New Branch**.
+- Type in a new branch name (e.g., `feature-login-update` or `bugfix-database-connection`).
+- Click **Create Branch**.
+- After making your changes, return to GitHub Desktop.
+- Review your changes in the **Changes** tab.
+- Add a summary of your changes in the **Summary** box.
+- Click **Commit to [your-branch-name]**.
 
-4. Make Your Changes:
+### 4. Push Your Changes to GitHub:
+- Once committed, click **Push origin** in GitHub Desktop to upload your changes to GitHub.
 
-Open the extracted files in your preferred code editor.
-
-Make the desired changes to the code.
-
-5. Create a New Branch and Upload Changes:
-
-Return to the GitHub repository page in your web browser.
-
-Click on the branch dropdown (usually says "main" or "master").
-
-In the text box, type a new branch name (e.g., "feature-login-update" or "bugfix-database-connection").
-
-Click "Create branch: [your-branch-name]" to create the new branch.
-
-
-6. Upload Your Changed Files:
-
-You should now be on your new branch's page.
-
-Click "Add file" near the top-right, then select "Upload files".
-
-Drag and drop your modified files into the upload area, or click "choose your files" to select them.
-
-In the "Commit changes" section at the bottom:
-
---Add a brief description of your changes in the first text box.
---(Optional) Add a more detailed description in the larger text box.
-
-Ensure "Commit directly to the [your-branch-name] branch" is selected.
-
-Click "Commit changes".
-
-7. Create a Pull Request (Optional):
-
-After uploading, you'll see a prompt to "Compare & pull request". Click this button.
-
-Add any necessary comments about your changes.
-
-Click "Create pull request" to submit your changes for review.
+### 5. Create a Pull Request (Optional):
+- After pushing, GitHub Desktop will show a notification with an option to create a pull request.
+- Click **Create Pull Request** in GitHub Desktop or go to the repository's GitHub page.
+- Add any necessary comments about your changes.
+- Click **Create pull request** to submit your changes for review.
 
 
 
@@ -132,5 +113,7 @@ Be descriptive in your commit messages and pull request descriptions.
 If you're working on a specific issue, reference the issue number in your commit message or pull request (e.g., "Fixes #123").
 
 Make sure you're only uploading files you've changed or added. Don't re-upload the entire project unless necessary.
+
+If you're unsure about any steps, ask for help from Mike Clopton.
 
 If you're unsure about any steps, ask for help from Mike Clopton.
