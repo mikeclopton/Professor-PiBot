@@ -78,7 +78,7 @@ Look for a message that says "This branch is up to date with main" to confirm yo
 - In the **URL** tab, paste the repository URL from GitHub.
 - Select the local path where you'd like to clone the repository.
 - Click **Clone**.
--Alternatively, you can click on the green "<> Code" button and click "Open With GitHub Desktop" to clone
+- Alternatively, you can click on the green "<> Code" button and click "Open With GitHub Desktop" to clone
 
 ### 2. Make Your Changes:
 - Open the cloned repository's folder in your preferred code editor.
