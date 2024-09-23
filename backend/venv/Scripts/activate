@@ -38,7 +38,7 @@ deactivate () {
 # unset irrelevant variables
 deactivate nondestructive
 
-VIRTUAL_ENV="C:\Users\mikes\Desktop\-\fall 2024\eng design 2 egn4952c\Professor PiBot\backend\venv"
+VIRTUAL_ENV="C:\Users\mikes\Documents\GitHub\Professor-PiBot\backend\venv"
 export VIRTUAL_ENV
 
 _OLD_VIRTUAL_PATH="$PATH"

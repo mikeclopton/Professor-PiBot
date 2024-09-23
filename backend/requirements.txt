@@ -2,3 +2,6 @@ Flask
 supabase
 openai
 python-dotenv
+flask_cors
+langchain
+langchain_groq

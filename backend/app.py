@@ -3,6 +3,7 @@ from flask_cors import CORS
 from supabase import create_client
 import os
 from dotenv import load_dotenv
+from MathTutorValidator import validate_solution, solve_problem
 
 load_dotenv()
 
@@ -28,6 +29,8 @@ def serve(path):
 def process_input():
     data = request.json
     user_input = data.get('input', '')
+    print("Received input from frontend:", user_input)
+
     submission_type = data.get('submissionType', '')
     
     # Store input in Supabase
@@ -37,10 +40,19 @@ def process_input():
     except Exception as e:
         print("Error storing input in Supabase:", str(e))
     
-    # Placeholder response until OpenAI is integrated
-    ai_response = f"OpenAI API not configured. Your {submission_type} input was: {user_input}"  
+    # # Placeholder response until OpenAI is integrated
+    # ai_response = f"OpenAI API not configured. Your {submission_type} input was: {user_input}" 
     
-    return jsonify({'response': ai_response})
+     
+    solution = solve_problem(user_input)
+
+    validation = validate_solution(user_input, solution)
+    
+    return jsonify({
+        'response':solution
+    })
+
+    # return jsonify({'response': ai_response})
 
 if __name__ == '__main__':
     app.run(debug=True)
