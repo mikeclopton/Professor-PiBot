@@ -1,17 +1,20 @@
 import React, { useState } from 'react';
-import axios from 'axios';  // You'll need to install axios: npm install axios
+import axios from 'axios';
 
-const Input = () => {
+const Input = ({ setResponse }) => {
   const [submissionType, setSubmissionType] = useState('latex');
   const [input, setInput] = useState('');
-  const [response, setResponse] = useState('');
 
   const handleTypeChange = (event) => {
     setSubmissionType(event.target.value);
   };
 
   const handleInputChange = (event) => {
-    setInput(event.target.value);
+    if (submissionType === 'photo') {
+      setInput(event.target.files[0]);
+    } else {
+      setInput(event.target.value);
+    }
   };
 
   const handleSubmit = async (event) => {
@@ -77,13 +80,6 @@ const Input = () => {
 
         <button type="submit">Submit</button>
       </form>
-
-      {response && (
-        <div>
-          <h3>Response:</h3>
-          <p>{response}</p>
-        </div>
-      )}
     </div>
   );
 };
