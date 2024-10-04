@@ -44,3 +44,63 @@
     width: 100%; 
     height: 100%;
 }
+input[type="radio"] {
+    margin-right: 5px; /* Space between radio button and label */
+}
+
+h2 {
+    color: #fff; /* Header color to stand out against the background */
+    text-align: center; /* Center align the header */
+}
+
+textarea {
+    width: 100%; /* Full width of the parent container */
+    padding: 10px; /* Padding inside the textarea */
+    border: 1px solid #ddd; /* Light border for the textarea */
+    border-radius: 4px; /* Rounded corners */
+    resize: vertical; /* Allow vertical resizing only */
+    margin-bottom: 10px; /* Space below the textarea */
+}
+
+button {
+    padding: 10px; /* Padding for the button */
+    background-color: #007bff; /* Bootstrap primary color */
+    border: none; /* Remove default border */
+    border-radius: 4px; /* Rounded corners */
+    color: white; /* White text color */
+    font-size: 16px; /* Font size for the button */
+    cursor: pointer; /* Pointer cursor on hover */
+    width: 100%; /* Full width of the parent container */
+}
+
+button:hover {
+    background-color: #0056b3; /* Darker shade for hover effect */
+}
+
+/* Style for the file input to look like a button */
+.file-input {
+    display: none; /* Hide the default file input */
+}
+
+.custom-file-upload {
+    display: inline-block; /* Inline for button-like appearance */
+    padding: 10px 20px; /* Padding for button */
+    cursor: pointer; /* Pointer cursor on hover */
+    background-color: #007bff; /* Bootstrap primary color */
+    border: none; /* No border */
+    border-radius: 4px; /* Rounded corners */
+    color: white; /* White text */
+    font-size: 16px; /* Font size */
+    margin-top: 10px; /* Space above the button */
+    margin-bottom: 20px;
+}
+
+.custom-file-upload:hover {
+    background-color: #0056b3; /* Darker shade on hover */
+}
+
+/* Optional: Style for showing the filename after selection */
+.file-name {
+    margin-top: 10px; /* Space below the file name */
+    color: #333; /* Color for the filename */
+}

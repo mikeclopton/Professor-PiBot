@@ -1,3 +1,4 @@
+/* register.css */
 .container {
     display: flex;
     justify-content: center; /* Centers items horizontally */
@@ -13,17 +14,42 @@
     width: 300px; /* Fixed width for the form */
 }
 
+.register-header {
+    text-align: center; /* Center header text */
+    margin-bottom: 20px; /* Space below header */
+    font-size: 20px; /* Adjust header size */
+    color: #333; /* Dark gray for header text color */
+}
+
 .register-input {
     display: flex;
     flex-direction: column;
 }
 
+.input-group {
+    position: relative; /* For positioning the icon */
+    margin-bottom: 10px; /* Space between inputs */
+}
+
+.input-group i {
+    position: absolute; /* Position the icon inside the input */
+    left: 10px; /* Align to the left */
+    top: 50%; /* Center vertically */
+    transform: translateY(-50%); /* Center the icon */
+    color: #aaa; /* Light gray for the icon color */
+}
+
 .register-input input {
-    margin-bottom: 10px;
-    padding: 10px;
+    padding: 10px 10px 10px 40px; /* Add padding to the left for icon */
     border: 1px solid #ddd; /* Light border for inputs */
     border-radius: 4px;
     font-size: 16px;
+    color: white; /* Change text color to white */
+    background-color: #333; /* Dark gray background for the input */
+}
+
+.register-input input::placeholder {
+    color: #aaa; /* Light gray for placeholder text */
 }
 
 .register-input button {
