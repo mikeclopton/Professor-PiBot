@@ -3,7 +3,7 @@
     display: flex;
     justify-content: center; /* Centers items horizontally */
     align-items: center; /* Centers items vertically */
-    height: 100vh; /* Full viewport height if you want full page centering */
+    height: 100vh; /* Full viewport height for full-page centering */
 }
 
 .login {
@@ -14,17 +14,42 @@
     width: 300px; /* Fixed width for the form */
 }
 
+.login-header {
+    text-align: center; /* Center header text */
+    margin-bottom: 20px; /* Space below header */
+    font-size: 20px; /* Adjust header size */
+    color: #333; /* Dark gray for header text color */
+}
+
 .login-input {
     display: flex;
     flex-direction: column;
 }
 
+.input-group {
+    position: relative; /* For positioning the icon */
+    margin-bottom: 10px; /* Space between inputs */
+}
+
+.input-group i {
+    position: absolute; /* Position the icon inside the input */
+    left: 10px; /* Align to the left */
+    top: 50%; /* Center vertically */
+    transform: translateY(-50%); /* Center the icon */
+    color: #aaa; /* Light gray for the icon color */
+}
+
 .login-input input {
-    margin-bottom: 10px;
-    padding: 10px;
+    padding: 10px 10px 10px 40px; /* Add padding to the left for icon */
     border: 1px solid #ddd; /* Light border for inputs */
     border-radius: 4px;
     font-size: 16px;
+    color: white; /* Change text color to white */
+    background-color: #333; /* Dark gray background for the input */
+}
+
+.login-input input::placeholder {
+    color: #aaa; /* Light gray for placeholder text */
 }
 
 .login-input button {
@@ -35,19 +60,33 @@
     color: white;
     font-size: 16px;
     cursor: pointer;
+    width: 100%; /* Make button full width */
 }
 
 .login-input button:hover {
     background-color: #0056b3; /* Darker shade for hover effect */
 }
 
-/* Existing styles remain unchanged */
-
-.register-button {
-    margin-top: 10px; /* Space between the Login and Register buttons */
-    background-color: #28a745; /* Green color for the Register button */
+.remember-me {
+    margin-top: 10px; /* Space between the button and remember me text */
+    display: flex; /* Align checkbox and label */
+    align-items: center; /* Center vertically */
+    color: black; /* Change text color to black */
 }
 
-.register-button:hover {
-    background-color: #218838; /* Darker green for hover effect */
+/* Existing styles... */
+
+.link {
+    margin-top: 15px; /* Space above the link */
+    text-align: center; /* Center the link */
+    font-size: 14px; /* Slightly smaller font size */
+}
+
+.link a {
+    color: #007bff; /* Bootstrap primary color for links */
+    text-decoration: none; /* Remove underline */
+}
+
+.link a:hover {
+    text-decoration: underline; /* Underline on hover */
 }
