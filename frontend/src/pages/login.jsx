@@ -6,7 +6,7 @@ function Login() {
     return (
         <div className="container">
             <div className="login">
-                <h2 className="login-header">Login to Your Account</h2>
+                <h2 className="login-header">Login to Your Account!</h2>
                 <div className="login-input">
                     <div className="input-group">
                         <i className="fas fa-user"></i>
