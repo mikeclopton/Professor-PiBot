@@ -1,24 +1,46 @@
-# Logs
+#Logs
 logs
-*.log
-npm-debug.log*
+.log
+npm-debug.log
 yarn-debug.log*
-yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
-node_modules
-dist
-dist-ssr
+#Dependency directories
+nodemodules/
+dist/
+build/
+bowercomponents/
+
+#Python specific
+__pycache/
+*.py[cod]
+venv/
+instance/
+.env
+*.sqlite3
+
+#Build directories
+build/
+dist/
 *.local
 
-# Editor directories and files
-.vscode/*
+#Editor directories and files
+.vscode/
 !.vscode/extensions.json
-.idea
+.idea/
 .DS_Store
 *.suo
-*.ntvs*
+.ntvs
 *.njsproj
 *.sln
 *.sw?
+
+#Miscellaneous
+*.log
+*.lock
+yarn-error.log
+
+#Coverage & cache files
+coverage/
+.cache/
