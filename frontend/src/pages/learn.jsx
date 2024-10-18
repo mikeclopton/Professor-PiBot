@@ -8,6 +8,8 @@ import '@fortawesome/fontawesome-free/css/all.min.css';
 function Learn() {
   const [response, setResponse] = useState('');
   const [latexPreview, setLatexPreview] = useState(''); // Manage LaTeX preview
+  const [module, setModule] = useState(1); // Default module value
+  const [part, setPart] = useState(1); // Default part value
 
   return (
     <>
@@ -28,7 +30,8 @@ function Learn() {
           <h2>
             Tutor <i className="fas fa-chalkboard-teacher"></i>
           </h2>
-          <Tutor />
+          {/* Pass module and part to Tutor component */}
+          <Tutor module={module} part={part} />
         </div>
       </div>
     </>
@@ -36,3 +39,4 @@ function Learn() {
 }
 
 export default Learn;
+

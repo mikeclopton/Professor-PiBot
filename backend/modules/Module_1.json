@@ -1,0 +1,35 @@
+{
+  "modules": {
+    "1": {
+      "title": "Counting and Probability",
+      "parts": {
+        "1": {
+          "questions": [
+            {
+              "question": "How many different ways can we order the three different elements of the set A = {a, b, c}?",
+              "answer": "6"
+            },
+            {
+              "question": "How many ways can you select 2 items out of 5?",
+              "answer": "10"
+            }
+          ]
+        },
+        "2": {
+          "questions": [
+            {
+              "question": "In horse racing, to bet the 'daily double' is to select the winners of the first two races of the day...",
+              "answer": "Varies based on the number of horses in the races"
+            },
+            {
+              "question": "Calculate the probability of drawing a red card from a standard deck.",
+              "answer": "1/2"
+            }
+          ]
+        }
+      }
+    }
+  }
+}
+
+  

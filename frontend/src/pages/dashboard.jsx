@@ -1,34 +1,85 @@
-import React from 'react';
+// Dashboard.jsx
+import React, { useEffect, useState } from 'react';
 import './dashboard.css';
 import '@fortawesome/fontawesome-free/css/all.min.css'; // Ensure Font Awesome is imported
+import EditInfoForm from '../components/EditInfoForm'; // Import the EditInfoForm component
 
 function Dashboard() {
-  return (
-    <>
-      <div className="dashboard">
-        <div className="dashboard-user-info">
-          {/* Placeholder for user info */}
-          <h3><i className="fas fa-user"></i> Your Information</h3> {/* User icon */}
-          <div className="info-placeholder">
-            <p><i className="fas fa-user-circle"></i> Name: John Doe</p> {/* Name icon */}
-            <p><i className="fas fa-envelope"></i> Email: johndoe@example.com</p> {/* Email icon */}
-            <button><i className="fas fa-edit"></i> Edit Info</button> {/* Edit icon */}
-          </div>
+    const [userInfo, setUserInfo] = useState(null);
+    const [progress, setProgress] = useState([]);
+    const [isEditing, setIsEditing] = useState(false); // State to manage edit form visibility
+
+    useEffect(() => {
+        const fetchUserData = async () => {
+            try {
+                const response = await fetch('http://127.0.0.1:5000/api/user', {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to fetch user data');
+                }
+
+                const data = await response.json();
+                setUserInfo(data.user);
+                setProgress(data.progress); // Assuming progress data is returned in the response
+            } catch (error) {
+                console.error('Error fetching user data:', error);
+            }
+        };
+
+        fetchUserData();
+    }, []);
+
+    const handleUpdate = (updatedInfo) => {
+        setUserInfo((prevUserInfo) => ({
+            ...prevUserInfo,
+            ...updatedInfo,
+        }));
+        setIsEditing(false); // Close the edit form after saving changes
+    };
+
+    return (
+        <div className="dashboard">
+            <div className="dashboard-user-info">
+                <h3><i className="fas fa-user"></i> Your Information</h3>
+                {userInfo ? (
+                    <div className="info-placeholder">
+                        {!isEditing ? (
+                            <>
+                                <p><i className="fas fa-user-circle"></i> Name: {userInfo.username}</p>
+                                <p><i className="fas fa-envelope"></i> Email: {userInfo.email}</p>
+                                <button onClick={() => setIsEditing(true)}>
+                                    <i className="fas fa-edit"></i> Edit Info
+                                </button>
+                            </>
+                        ) : (
+                            <EditInfoForm user={userInfo} onUpdate={handleUpdate} onCancel={() => setIsEditing(false)} />
+                        )}
+                    </div>
+                ) : (
+                    <p>Loading user information...</p>
+                )}
+            </div>
+            <div className="dashboard-progress">
+                <h3><i className="fas fa-chart-line"></i> Your Progress</h3>
+                {progress.length > 0 ? (
+                    <div className="progress-placeholder">
+                        {progress.map((topic, index) => (
+                            <p key={index}>
+                                <i className="fas fa-book-open"></i> {topic.name}: {topic.completion}% Complete
+                            </p>
+                        ))}
+                    </div>
+                ) : (
+                    <p>No progress data available.</p>
+                )}
+            </div>
         </div>
-        <div className="dashboard-progress">
-          {/* Placeholder for progress tracking */}
-          <h3><i className="fas fa-chart-line"></i> Your Progress</h3> {/* Progress chart icon */}
-          <div className="progress-placeholder">
-            <p><i className="fas fa-book-open"></i> Topic 1: Sets and Logic - 50% Complete</p> {/* Topic icon */}
-            <p><i className="fas fa-book-open"></i> Topic 2: Relations and Functions - 30% Complete</p>
-            <p><i className="fas fa-book-open"></i> Topic 3: Graph Theory - 0% Complete</p>
-            {/* More topics can be added here */}
-          </div>
-        </div>
-      </div>
-    </>
-  );
+    );
 }
 
 export default Dashboard;
-
