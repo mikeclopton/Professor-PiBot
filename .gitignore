@@ -44,3 +44,5 @@ yarn-error.log
 # Coverage & cache files
 coverage/
 .cache/
+
+flask_session/

@@ -71,12 +71,12 @@ const Tutor = ({ module, part }) => {
       <ul>
         {questions.map((question, index) => (
           <li key={index}>
-            {question.question} {/* Display the question */}
+            {question.question} 
           </li>
         ))}
       </ul>
       <h3>AI Tutor Response:</h3>
-      <p>{aiResponse}</p> {/* Display AI response here */}
+      <p>{aiResponse}</p>
     </div>
   );
 };
