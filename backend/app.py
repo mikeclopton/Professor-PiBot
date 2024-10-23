@@ -7,6 +7,7 @@ import json
 import os
 from dotenv import load_dotenv
 from MathTutorValidator import validate_solution, solve_problem
+import requests
 
 
 # Load environment variables
@@ -155,6 +156,14 @@ def process_input():
     submission_type = data.get('submissionType', '')
     print("Received input from frontend:", user_input)
 
+    # If the input is from the drawing pad, we expect a different format.
+    if submission_type == 'pen':
+        # Assuming the drawing pad sends the output from the MathPix API as input.
+        # You might receive a specific key from the MathPix response; adjust accordingly.
+        # For example, let's say the output you need is under 'latex_styled'.
+        user_input = data.get('drawingOutput', {}).get('latex_styled', '')
+        print("Processed drawing input:", user_input)
+
     try:
         # Store input in Supabase for record-keeping
         response = supabase.table('inputs').insert({
@@ -170,6 +179,7 @@ def process_input():
     validation = validate_solution(user_input, solution)
 
     return jsonify({'response': solution, 'validation': validation})
+
 
 
 # Update user information
@@ -200,6 +210,35 @@ def update_user_info():
         return jsonify({'error': 'An error occurred during update'}), 500
 
 
+@app.route('/api/process-drawing', methods=['POST'])
+def process_drawing_endpoint():
+    data = request.get_json()
+    print(f"Received data: {data}")  # Debugging line
+    image_src = data.get('src')
+    formats = data.get('formats', [])
+    data_options = data.get('data_options', {})
+
+    try:
+        # Call to MathPix API
+        mathpix_response = requests.post('https://api.mathpix.com/v3/text', json={
+            'src': image_src,
+            'formats': formats,
+            'data_options': data_options
+        }, headers={
+            'Content-Type': 'application/json',
+            'app_id': 'professorpibot_595db5_469c13',
+            'app_key': 'bc046ba83fbef012a716ba990b74c53a857a1b90fec7ac9dbd4b0409b5a92a68'
+        })
+        
+        print(f"MathPix response: {mathpix_response.text}")  # Debugging line
+        
+        if mathpix_response.status_code == 200:
+            return jsonify(mathpix_response.json())
+        else:
+            return jsonify({'error': 'Failed to process drawing', 'status_code': mathpix_response.status_code}), 500
+    except Exception as e:
+        print(f"Error occurred: {str(e)}")  # Debugging line
+        return jsonify({'error': str(e)}), 500
 
 
 # Run the Flask app
