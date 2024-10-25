@@ -123,6 +123,28 @@ def get_user_info():
         return jsonify({'error': 'An error occurred'}), 500
 
 
+# Serve module JSON files dynamically
+@app.route('/api/getmodule', methods=['GET'])
+def get_module():
+    module_number = request.args.get('module')
+    try:
+        # Use os.path.join to safely construct the path to the module file
+        module_path = os.path.join('modules', f'Module_{module_number}.json')
+        
+        print(f"Fetching module from: {module_path}")  # Debugging line
+
+        # Open and load the module JSON file
+        with open(module_path) as f:
+            module_data = json.load(f)
+            print(f"Module data loaded: {module_data}")  # Debugging line
+            return jsonify(module_data), 200
+    except FileNotFoundError:
+        print("File not found")  # Debugging line
+        return jsonify({'error': 'Module not found'}), 404
+    except Exception as e:
+        print(f"Error loading module: {e}")  # Debugging line
+        return jsonify({'error': 'An error occurred while loading the module'}), 500
+
 
 @app.route('/api/get_tutor_response', methods=['GET'])
 def get_tutor_response():
@@ -153,7 +175,6 @@ def get_tutor_response():
         return jsonify({'error': 'Module or part not found'}), 404
 
 
-
 # Process input for AI tutoring
 @app.route('/api/process', methods=['POST'])
 def process_input():
@@ -161,14 +182,6 @@ def process_input():
     user_input = data.get('input', '')
     submission_type = data.get('submissionType', '')
     print("Received input from frontend:", user_input)
-
-    # If the input is from the drawing pad, we expect a different format.
-    if submission_type == 'pen':
-        # Assuming the drawing pad sends the output from the MathPix API as input.
-        # You might receive a specific key from the MathPix response; adjust accordingly.
-        # For example, let's say the output you need is under 'latex_styled'.
-        user_input = data.get('drawingOutput', {}).get('latex_styled', '')
-        print("Processed drawing input:", user_input)
 
     try:
         # Store input in Supabase for record-keeping
@@ -187,8 +200,6 @@ def process_input():
     return jsonify({'response': solution, 'validation': validation})
 
 
-
-# Update user information
 @app.route('/api/update_user_info', methods=['PUT'])
 def update_user_info():
     user_id = session.get('user_id')
@@ -245,18 +256,6 @@ def process_drawing_endpoint():
     except Exception as e:
         print(f"Error occurred: {str(e)}")  # Debugging line
         return jsonify({'error': str(e)}), 500
-
-
-@app.route('/api/getmodule', methods=['GET'])
-def get_module():
-    module_number = request.args.get('module')
-    try:
-        with open(f'modules/Module{module_number}.json') as f:
-            module_data = json.load(f)
-            return jsonify(module_data), 200
-    except FileNotFoundError:
-        return jsonify({'error': 'Module not found'}), 404
-
 
 
 # Run the Flask app

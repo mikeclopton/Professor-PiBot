@@ -1,25 +1,23 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { createClient } from '@supabase/supabase-js';
-import { MathJax, MathJaxContext } from 'better-react-mathjax';
-
-// Supabase Configuration
-const SUPABASE_URL = 'https://yryikveitsajowqjuewz.supabase.co';
-const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlyeWlrdmVpdHNham93cWp1ZXd6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjY3NjU1OTEsImV4cCI6MjA0MjM0MTU5MX0.wXBjw_ynVx9fTs15A54OkBXle66TkPl5y7CNelk5KQ4';
-const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
 const Input = ({ module, setResponse, setLatexPreview }) => {
     const [submissionType, setSubmissionType] = useState('latex');
     const [input, setInput] = useState('');
     const [questions, setQuestions] = useState([]);
-    const [currentQuestion, setCurrentQuestion] = useState(1);  // Track current question number
+    const [currentQuestion, setCurrentQuestion] = useState(0);  // Start from the first question
 
     useEffect(() => {
         // Fetch the questions for the given module
         const fetchQuestions = async () => {
             try {
-                const res = await axios.get(`/api/get_module?module=${module}`);
-                setQuestions(res.data.modules[module].questions || []);
+                const res = await axios.get(`http://127.0.0.1:5000/api/getmodule?module=${module}`);
+                console.log("Full API Response:", res.data);  // Log the API response to see the exact data structure
+                if (res.data && res.data.modules) {
+                    setQuestions(res.data.modules[module].parts[1].questions || []);  // Load questions from part 1
+                } else {
+                    console.error("Error fetching module:", res.data.error);
+                }
             } catch (error) {
                 console.error('Error fetching questions:', error);
             }
@@ -42,39 +40,36 @@ const Input = ({ module, setResponse, setLatexPreview }) => {
         }
     };
 
-    // Function to check the user's answer and insert the result into Supabase
+    // Function to check the user's answer
     const handleSubmit = async (event) => {
         event.preventDefault();
-        const correctAnswer = questions[currentQuestion]?.answer;
 
+        // Check if questions are loaded
+        if (questions.length === 0) {
+            setResponse("Error: Questions not loaded yet.");
+            return;
+        }
+
+        // Fetch the current question's data
+        const currentQuestionData = questions[currentQuestion];
+
+        if (!currentQuestionData) {
+            console.error("Question data not found for current index:", currentQuestion);  // Debugging
+            setResponse("Error: Question data not found.");
+            return;
+        }
+
+        // Extract the correct answer
+        const correctAnswer = currentQuestionData.answer;
+
+        // Compare user input with the correct answer (string comparison)
         let isCorrect = false;
-        if (correctAnswer && input === correctAnswer) {
+        if (input === correctAnswer) {
             isCorrect = true;
         }
 
-        setResponse(isCorrect ? 'Correct!' : `Wrong, the correct answer is: ${correctAnswer}`);
-
-        // Example: Insert user's submission and progress into the Supabase database
-        try {
-            const { data, error } = await supabase
-                .from('submissions') // Assume you have a 'submissions' table in Supabase
-                .insert([{ 
-                    answer: input, 
-                    correct: isCorrect, 
-                    module_number: module, 
-                    question_number: currentQuestion + 1 
-                }]);
-
-            if (error) {
-                console.error('Error inserting into Supabase:', error);
-            } else {
-                console.log('Inserted into Supabase:', data);
-            }
-
-        } catch (error) {
-            console.error('Error submitting input:', error);
-            setResponse('Error processing your input');
-        }
+        // Update the response to show feedback
+        setResponse(isCorrect ? "Correct!" : `Wrong, the correct answer is: ${correctAnswer}`);
     };
 
     return (
