@@ -1,0 +1,37 @@
+{
+  "modules": {
+    "3": {
+      "title": "Logic and Argument Forms",
+      "parts": {
+        "1": {
+          "questions": [
+            {
+              "number": 1,
+              "question": "Rewrite the statements in if-then form: (a) This loop will repeat exactly N times if it does not contain a stop or a go to. (b) Freeze or I’ll shoot. (c) Fix my ceiling or I won’t pay my rent.",
+              "answer": {
+                "a": "If this loop does not contain a stop or a go to, then it will repeat exactly N times.",
+                "b": "If you do not freeze, then I will shoot.",
+                "c": "If you do not fix my ceiling, then I won’t pay my rent."
+              }
+            },
+            {
+              "number": 2,
+              "question": "Construct truth tables for the statement forms: (a) ∼ p ∨ q →∼ q (b) (p ∨ q) ∨ (∼ p ∧ q) → q (c) (p → r) ↔ (q → r)",
+              "answer": "Truth tables provided in solution key."
+            },
+            {
+              "number": 3,
+              "question": "Suppose that p and q are statements so that p → q is false. Find the truth values of each: (a) ∼ p → q (b) p ∨ q (c) q → p",
+              "answer": "Given p → q is false, it follows that p = True and q = False. (a) True, (b) True, (c) True"
+            },
+            {
+              "number": 4,
+              "question": "Use logical equivalences to rewrite the given statement forms without symbols → or ↔ and using only ∧ and ∼: (a) p∧ ∼ q → r (b) p∨ ∼ q → r ∨ q (c) (p → r) ↔ (q → r) (d) (p → (q → r)) ↔ ((p ∧ q) → r)",
+              "answer": "Rewritten statements provided in solution key."
+            }
+          ]
+        }
+      }
+    }
+  }
+}

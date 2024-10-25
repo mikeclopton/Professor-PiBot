@@ -1,0 +1,120 @@
+{
+    "modules": {
+      "7": {
+        "title": "Graph Theory",
+        "parts": {
+          "1": {
+            "questions": [
+              {
+                "number": 1,
+                "question": "Consider a graph G consisting of vertices V = {v₁, v₂, v₃, v₄} and edges E = {e₁ = (v₁, v₂), e₂ = (v₂, v₃), e₃ = (v₃, v₁), e₄ = (v₃, v₄)}. (a) Is G directed or undirected? (b) Draw G and label vertices and edges. (c) Determine degree of each vertex. (d) Is G connected?",
+                "answer": {
+                  "a": {
+                    "answer": "directed",
+                    "explanation": "The graph G is directed as indicated by the use of ordered pairs for edges, implying direction from the first vertex to the second in each pair."
+                  },
+                  "b": "See diagram in reference materials",
+                  "c": {
+                    "v1": {"degree": 2, "edges": ["e1", "e3"]},
+                    "v2": {"degree": 2, "edges": ["e1", "e2"]},
+                    "v3": {"degree": 3, "edges": ["e2", "e3", "e4"]},
+                    "v4": {"degree": 1, "edges": ["e4"]}
+                  },
+                  "d": {
+                    "answer": true,
+                    "explanation": "G is connected because there is a path between any pair of vertices."
+                  }
+                }
+              },
+              {
+                "number": 2,
+                "question": "Define a multigraph and explain how it differs from a simple graph. Provide an example of a multigraph that includes at least one loop and multiple edges between two vertices. Describe a possible real-world scenario this multigraph could represent.",
+                "answer": {
+                  "definition": "A multigraph is a graph which is permitted to have multiple edges (also known as parallel edges) between the same pair of nodes and loops (edges that connect a vertex to itself).",
+                  "difference": "This differs from a simple graph, which allows only one edge between each pair of vertices and does not allow loops.",
+                  "example": "See diagram in reference materials",
+                  "real_world_scenario": "Transportation routes between cities where multiple edges represent different modes of transportation and loops represent local transit within a city."
+                }
+              },
+              {
+                "number": 3,
+                "question": "Given edges E = {(A, B), (B, C), (C, D),(D, A), (B, D), (C, A)}, (a) Draw the directed graph. (b) Identify circuits and classify them. (c) Does this graph have an Euler path or circuit?",
+                "answer": {
+                  "a": "See diagram in reference materials",
+                  "b": {
+                    "circuits": [
+                      {
+                        "path": "A → B → C → D → A",
+                        "type": "simple",
+                        "explanation": "Passes through each vertex exactly once before returning"
+                      },
+                      {
+                        "path": "B → D → A → B",
+                        "type": "simple",
+                        "explanation": "Passes through each vertex exactly once before returning"
+                      },
+                      {
+                        "path": "A → B → C → A",
+                        "type": "simple",
+                        "explanation": "Passes through each vertex exactly once before returning"
+                      }
+                    ]
+                  },
+                  "c": {
+                    "euler_path": false,
+                    "euler_circuit": false,
+                    "explanation": "For an Euler Circuit, each vertex must have same number of incoming and outgoing edges. For an Euler Path, exactly zero or two vertices should have outgoing edges exceed incoming edges by one. Neither condition is met."
+                  }
+                }
+              },
+              {
+                "number": 4,
+                "question": "A tournament graph is a directed graph D on n vertices such that there is exactly one directed edge between each pair of distinct vertices. Consider a tournament graph with 5 vertices. (a) How many edges? (b) Can every vertex have same degree? (c) Can it be a simple graph?",
+                "answer": {
+                  "complete_tournament": {
+                    "a": {
+                      "answer": 10,
+                      "explanation": "Number of edges = 5×(5-1)/2 = 10"
+                    },
+                    "b": {
+                      "answer": false,
+                      "explanation": "Not possible as each game has winner and loser, affecting in-degrees and out-degrees differently"
+                    },
+                    "c": {
+                      "answer": true,
+                      "explanation": "It's a simple directed graph with exactly one edge between vertices, no self-loops"
+                    }
+                  },
+                  "single_elimination": {
+                    "a": {
+                      "answer": 4,
+                      "explanation": "Number of edges = 5-1 = 4"
+                    },
+                    "b": {
+                      "answer": false,
+                      "explanation": "Champion vertex has degree n-1, others have in-degree 1"
+                    },
+                    "c": {
+                      "answer": true,
+                      "explanation": "Forms simple directed graph with hierarchical structure"
+                    }
+                  }
+                }
+              },
+              {
+                "number": 5,
+                "question": "Analyze graphs G₁ with vertices {a,b,c,d} and edges {(a,b),(b,c),(c,d),(d,a),(a,c)} and G₂ with vertices {w,x,y,z} and edges {(w,x),(x,y),(y,z),(z,w),(w,y)}. (a) Draw both graphs. (b) Assess if they're isomorphic.",
+                "answer": {
+                  "a": "See diagram in reference materials",
+                  "b": {
+                    "isomorphic": true,
+                    "explanation": "Both f and h are one-to-one correspondence between vertices and edges"
+                  }
+                }
+              }
+            ]
+          }
+        }
+      }
+    }
+  }

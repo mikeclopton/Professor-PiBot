@@ -143,9 +143,15 @@ def get_tutor_response():
             if not questions:
                 return jsonify({'error': 'Module or part not found'}), 404
             
-            return jsonify({'questions': questions}), 200
+            # Return the entire part information for navigation
+            part_info = {
+                'title': data['modules'][module]['title'],
+                'questions': questions
+            }
+            return jsonify(part_info), 200
     except FileNotFoundError:
         return jsonify({'error': 'Module or part not found'}), 404
+
 
 
 # Process input for AI tutoring
@@ -239,6 +245,18 @@ def process_drawing_endpoint():
     except Exception as e:
         print(f"Error occurred: {str(e)}")  # Debugging line
         return jsonify({'error': str(e)}), 500
+
+
+@app.route('/api/getmodule', methods=['GET'])
+def get_module():
+    module_number = request.args.get('module')
+    try:
+        with open(f'modules/Module{module_number}.json') as f:
+            module_data = json.load(f)
+            return jsonify(module_data), 200
+    except FileNotFoundError:
+        return jsonify({'error': 'Module not found'}), 404
+
 
 
 # Run the Flask app
