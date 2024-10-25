@@ -4,6 +4,7 @@ import './learn.css';
 import Input from '../components/input';
 import Output from '../components/output';
 import Tutor from '../components/tutor';
+import axios from 'axios';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 
 function Learn() {
@@ -12,6 +13,7 @@ function Learn() {
   const [latexPreview, setLatexPreview] = useState(''); // Manage LaTeX preview
   const [module, setModule] = useState(1); // Default module value
   const [part, setPart] = useState(1); // Default part value
+  const [userId, setUserId] = useState(null); // Store userId
 
   useEffect(() => {
     // Parse the query parameters from the URL
@@ -22,6 +24,22 @@ function Learn() {
     // Set module and part based on URL query parameters
     if (selectedModule) setModule(parseInt(selectedModule));
     if (selectedPart) setPart(parseInt(selectedPart));
+
+    // Fetch user info from backend
+    const fetchUser = async () => {
+      try {
+        const res = await axios.get('http://127.0.0.1:5000/api/user'); // Adjust the backend URL if needed
+        if (res.status === 200) {
+          setUserId(res.data.user_id); // Set the user ID
+        } else {
+          console.error("Error fetching user data:", res.data.error);
+        }
+      } catch (error) {
+        console.error("Error fetching user info:", error);
+      }
+    };
+
+    fetchUser(); // Call the function to fetch user session info
   }, [location]);
 
   return (
@@ -30,7 +48,8 @@ function Learn() {
         <h2>
           Input <i className="fas fa-pencil-alt"></i>
         </h2>
-        <Input setResponse={setResponse} setLatexPreview={setLatexPreview} module={module} />
+        {/* Pass userId to the Input component */}
+        <Input setResponse={setResponse} setLatexPreview={setLatexPreview} module={module} userId={userId} />
       </div>
       <div className="learn-output">
         <h2>

@@ -85,7 +85,7 @@ def login():
         if user and check_password_hash(user['password'], password):
             # Save the user id in the session
             session['user_id'] = user['id']
-            return jsonify({'message': 'Login successful'}), 200
+            return jsonify({'message': 'Login successful', 'user_id': user['id']}), 200
         else:
             return jsonify({'error': 'Invalid email or password'}), 401
     except Exception as e:
@@ -93,13 +93,7 @@ def login():
         return jsonify({'error': 'An error occurred during login'}), 500
 
 
-# Logout user
-@app.route('/api/logout', methods=['POST'])
-def logout():
-    session.pop('user_id', None)  # Remove the user from the session
-    return jsonify({'message': 'Logout successful'}), 200
-
-
+# Get user info from the session (API for frontend to use)
 @app.route('/api/user', methods=['GET'])
 def get_user_info():
     user_id = session.get('user_id')
@@ -113,14 +107,20 @@ def get_user_info():
         user = result.data
 
         if user:
-            response = make_response(jsonify({'user': user, 'progress': []}))  # Add actual progress logic here
-            response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
-            return response, 200
+            return jsonify({'user': user, 'user_id': user_id}), 200
         else:
             return jsonify({'error': 'User not found'}), 404
     except Exception as e:
         print('Error fetching user info:', str(e))
         return jsonify({'error': 'An error occurred'}), 500
+
+
+# Logout user
+@app.route('/api/logout', methods=['POST'])
+def logout():
+    session.pop('user_id', None)  # Remove the user from the session
+    return jsonify({'message': 'Logout successful'}), 200
+
 
 
 # Serve module JSON files dynamically
@@ -256,8 +256,49 @@ def process_drawing_endpoint():
     except Exception as e:
         print(f"Error occurred: {str(e)}")  # Debugging line
         return jsonify({'error': str(e)}), 500
+    
+
+@app.route('/api/update-progress', methods=['POST'])
+def update_progress():
+    data = request.json
+    user_id = data.get('user_id')
+    module_id = data.get('module_id')
+    progress = data.get('progress')  # Progress will be passed as a percentage (e.g., 0.5 for 50%)
+
+    if not user_id or not module_id or progress is None:
+        print(f"Missing data - User ID: {user_id}, Module ID: {module_id}, Progress: {progress}")
+        return jsonify({'error': 'Missing required data'}), 400
+
+    try:
+        # Check if the user already has progress in this module
+        result = supabase.table('progress').select('*').eq('user_id', user_id).eq('module_id', module_id).execute()
+        existing_progress = result.data
+
+        if existing_progress:
+            # Update existing progress
+            supabase.table('progress').update({
+                'progress': progress,
+                'completion_status': progress >= 1.0
+            }).eq('user_id', user_id).eq('module_id', module_id).execute()
+        else:
+            # Insert new progress record
+            supabase.table('progress').insert({
+                'user_id': user_id,
+                'module_id': module_id,
+                'progress': progress,
+                'completion_status': progress >= 1.0  # If progress is 100%, mark as complete
+            }).execute()
+
+        return jsonify({'message': 'Progress updated successfully'}), 200
+    except Exception as e:
+        print(f"Error updating progress: {str(e)}")
+        return jsonify({'error': 'An error occurred while updating progress'}), 500
+
+
+
 
 
 # Run the Flask app
 if __name__ == '__main__':
     app.run(debug=True)
+
