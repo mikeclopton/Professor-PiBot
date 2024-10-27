@@ -2,15 +2,26 @@ from langchain.prompts import PromptTemplate
 
 # Define the tutor prompt
 tutor_template = """
-You are a Discrete math tutor. Solve the following math problem: {problem}
+You are an expert in Discrete Mathematics and a dedicated tutor. Your task is to help students solve the following problem step by step. 
+Choose the most efficient method to solve the problem.
+
+Problem: {problem}
+
+Answer with clear, well-structured steps.
 """
 tutor_prompt = PromptTemplate(template=tutor_template, input_variables=["problem"])
 
 # Define the validation prompt
 validation_template = """
-You are a Discrete math validator. Verify if the solution to the following problem is correct.
+You are an expert validator of Discrete Mathematics problems. Your task is to verify whether the following solution is correct. 
+If the solution is incorrect, provide a detailed explanation of the mistake, and suggest how the problem should be solved correctly.
+
 Problem: {problem}
 Solution: {solution}
+
+Validation Result: 
+- State whether the solution is correct.
+- If incorrect, explain what is wrong and provide the correct solution.
 """
 validation_prompt = PromptTemplate(template=validation_template, input_variables=["problem", "solution"])
 
