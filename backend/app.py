@@ -27,6 +27,8 @@ supabase_url = os.getenv('SUPABASE_URL')
 supabase_key = os.getenv('SUPABASE_KEY')
 supabase = create_client(supabase_url, supabase_key)
 
+mathpix_url = os.getenv('MATHPIX_APP_ID')
+mathpix_key = os.getenv('MATHPIX_API_KEY')
 
 # Serve the frontend
 @app.route('/', defaults={'path': ''})
@@ -243,8 +245,8 @@ def process_drawing_endpoint():
             'data_options': data_options
         }, headers={
             'Content-Type': 'application/json',
-            'app_id': 'professorpibot_595db5_469c13',
-            'app_key': 'bc046ba83fbef012a716ba990b74c53a857a1b90fec7ac9dbd4b0409b5a92a68'
+            'app_id': mathpix_url,
+            'app_key': mathpix_key
         })
         
         print(f"MathPix response: {mathpix_response.text}")  # Debugging line
