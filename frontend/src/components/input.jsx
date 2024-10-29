@@ -6,18 +6,18 @@ const Input = ({ module, userId, setResponse, setLatexPreview }) => {
     const [submissionType, setSubmissionType] = useState('latex');
     const [input, setInput] = useState('');
     const [questions, setQuestions] = useState([]);
-    const [currentQuestion, setCurrentQuestion] = useState(0);  // Start from the first question
-    const [response, setResponseState] = useState('');  // Local response state for feedback
-    const [progress, setProgress] = useState(0);  // Track progress as a percentage
+    const [currentQuestion, setCurrentQuestion] = useState(0);  
+    const [response, setResponseState] = useState('');  
+    const [progress, setProgress] = useState(0);  
+    const [image, setImage] = useState(null);
 
     useEffect(() => {
-        // Fetch the questions for the given module
         const fetchQuestions = async () => {
             try {
                 const res = await axios.get(`http://127.0.0.1:5000/api/getmodule?module=${module}`);
-                console.log("Full API Response:", res.data);  // Log the API response to see the exact data structure
+                console.log("Full API Response:", res.data);
                 if (res.data && res.data.modules) {
-                    setQuestions(res.data.modules[module].parts[1].questions || []);  // Load questions from part 1
+                    setQuestions(res.data.modules[module].parts[1].questions || []);
                 } else {
                     console.error("Error fetching module:", res.data.error);
                 }
@@ -28,7 +28,6 @@ const Input = ({ module, userId, setResponse, setLatexPreview }) => {
         fetchQuestions();
     }, [module]);
 
-    // Calculate progress based on completed questions
     const calculateProgress = (questionIndex) => {
         if (questions.length > 0) {
             const newProgress = (questionIndex + 1) / questions.length;
@@ -36,16 +35,15 @@ const Input = ({ module, userId, setResponse, setLatexPreview }) => {
         }
     };
 
-    // Update progress in the backend (Supabase)
     const updateProgressInBackend = async () => {
         try {
             const data = {
-                user_id: userId,   // Ensure this is correctly passed to the component
-                module_id: module,  // Ensure this is the correct module ID
-                progress: progress  // Progress is a float (e.g., 0.5 for 50%)
+                user_id: userId,
+                module_id: module,
+                progress: progress
             };
-            console.log("Sending progress update:", data);  // Debugging to see what's being sent
-            const res = await axios.post('/api/update-progress', data);  // Ensure the API route is correct
+            console.log("Sending progress update:", data);
+            const res = await axios.post('/api/update-progress', data);
             if (res.status === 200) {
                 console.log("Progress updated successfully");
             } else {
@@ -59,106 +57,98 @@ const Input = ({ module, userId, setResponse, setLatexPreview }) => {
     const nextQuestion = () => {
         if (currentQuestion < questions.length - 1) {
             setCurrentQuestion(prevQuestion => prevQuestion + 1);
-            setInput(''); // Reset input for the new question
-            setResponseState(''); // Reset the response for the new question
+            setInput('');
+            setResponseState('');
         }
     };
 
     const prevQuestion = () => {
         if (currentQuestion > 0) {
             setCurrentQuestion(prevQuestion => prevQuestion - 1);
-            setInput(''); // Reset input for the new question
-            setResponseState(''); // Reset the response for the new question
+            setInput('');
+            setResponseState('');
         }
     };
 
     const handleTypeChange = (event) => {
         setSubmissionType(event.target.value);
         setInput('');
-        setLatexPreview(''); // Reset LaTeX preview
+        setLatexPreview('');
+        setImage(null); // Reset image state when switching submission type
     };
 
     const handleInputChange = (event) => {
         const newInput = event.target.value;
         setInput(newInput);
-
         if (submissionType === 'latex') {
-            setLatexPreview(newInput); // Update LaTeX preview as user types
+            setLatexPreview(newInput);
         }
     };
 
     const handleDrawingInput = (drawingData) => {
-        // Handle data from DrawingPad component
         setInput(drawingData);
     };
 
-    // Function to check the user's answer
+    const handleImageChange = (event) => {
+        const file = event.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = () => setImage(reader.result);
+            reader.readAsDataURL(file);
+        }
+    };
+
     const handleSubmit = async (event) => {
         event.preventDefault();
 
-        // Check if questions are loaded
         if (questions.length === 0) {
             setResponseState("Error: Questions not loaded yet.");
             return;
         }
 
-        // Fetch the current question's data
         const currentQuestionData = questions[currentQuestion];
 
         if (!currentQuestionData) {
-            console.error("Question data not found for current index:", currentQuestion);  // Debugging
+            console.error("Question data not found for current index:", currentQuestion);
             setResponseState("Error: Question data not found.");
             return;
         }
 
-        // Handle submission for different input types
-        if (submissionType === 'pen') {
-            // Send drawing pad data to the backend
+        if (submissionType === 'photo' && image) {
             try {
-                const drawingResponse = await axios.post('/api/process-drawing', { src: input, formats: ['latex'], data_options: {} });
-                const latexOutput = drawingResponse.data.latex_styled || '';
-                setInput(latexOutput); // Update input with LaTeX from MathPix API
+                const photoResponse = await axios.post('/api/process-drawing', {
+                    src: image,
+                    formats: ['latex'],
+                    data_options: {},
+                });
+                const latexOutput = photoResponse.data.latex_styled || '';
+                setInput(latexOutput);
                 setLatexPreview(latexOutput);
             } catch (error) {
-                console.error("Error processing drawing input:", error);
-                setResponseState("Error processing drawing input");
+                console.error("Error processing photo input:", error);
+                setResponseState("Error processing photo input");
                 return;
             }
         }
 
-        // Extract the correct answer
         const correctAnswer = currentQuestionData.answer;
-
-        // Compare user input with the correct answer (string comparison)
         const isCorrect = input === correctAnswer;
-
-        // Update the response to show feedback
         setResponseState(isCorrect ? "Correct!" : `Wrong, the correct answer is: ${correctAnswer}`);
 
         if (isCorrect) {
-            // Only update progress if the answer is correct
             console.log("Answer is correct, updating progress...");
             calculateProgress(currentQuestion);
-            updateProgressInBackend();  // Update progress after correct answer submission
+            updateProgressInBackend();
         }
     };
 
     return (
         <div>
-            {/* Display the current question */}
             <h2>{questions[currentQuestion]?.question || 'Loading...'}</h2>
-
-            {/* Navigation buttons for previous/next questions */}
             <button onClick={prevQuestion} disabled={currentQuestion === 0}>Previous</button>
             <button onClick={nextQuestion} disabled={currentQuestion === questions.length - 1}>Next</button>
-
-            {/* Display the response for feedback */}
             <p>{response}</p>
-
-            {/* Display progress */}
             <p>Progress: {(progress * 100).toFixed(2)}%</p>
-
-            {/* Form to submit answers */}
             <form onSubmit={handleSubmit}>
                 <div>
                     <label>
@@ -190,7 +180,6 @@ const Input = ({ module, userId, setResponse, setLatexPreview }) => {
                     </label>
                 </div>
 
-                {/* Input field for the user's answer */}
                 {submissionType === 'latex' && (
                     <textarea 
                         placeholder="Enter your LaTeX code here..."
@@ -199,9 +188,12 @@ const Input = ({ module, userId, setResponse, setLatexPreview }) => {
                     ></textarea>
                 )}
 
-                {/* Drawing Pad Component */}
+                {submissionType === 'photo' && (
+                    <input type="file" accept="image/*" onChange={handleImageChange} />
+                )}
+
                 {submissionType === 'pen' && (
-                    <DrawingPad onInputChange={handleDrawingInput} />
+                    <DrawingPad onInputChange={handleDrawingInput} setLatexPreview={setLatexPreview} />
                 )}
 
                 <button type="submit">Submit</button>
