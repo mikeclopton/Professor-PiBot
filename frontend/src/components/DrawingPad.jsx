@@ -1,7 +1,7 @@
 import React, { useRef, useEffect, useState } from 'react';
 import axios from 'axios';
 
-const DrawingPad = ({ setResponse }) => {
+const DrawingPad = ({ setResponse, setLatexPreview }) => {
     const canvasRef = useRef(null);
     const [ctx, setCtx] = useState(null);
     const [drawing, setDrawing] = useState(false);
@@ -36,24 +36,20 @@ const DrawingPad = ({ setResponse }) => {
     const submitDrawing = async () => {
         const image = canvasRef.current.toDataURL('image/png');
         try {
-            // Call your backend endpoint that processes the drawing
             const response = await axios.post('http://127.0.0.1:5000/api/process-drawing', {
-                src: image, // Base64 image
+                src: image,
                 formats: ['text', 'latex_styled'],
                 data_options: { include_asciimath: true }
             });
-    
-            // Assuming your backend returns the LaTeX or text response
-            const latexOutput = response.data.latex_styled; // Adjust according to your backend response structure
 
-            // Now, send the LaTeX output to your AI processing endpoint
+            const latexOutput = response.data.latex_styled;
+            setLatexPreview(latexOutput);  // Update LaTeX preview in Input
             const aiResponse = await axios.post('http://127.0.0.1:5000/api/process', {
-                input: latexOutput,  // Use the LaTeX output from the drawing processing
-                submissionType: 'drawing' // Indicate this input is from the drawing pad
+                input: latexOutput,
+                submissionType: 'drawing'
             });
-    
-            // Display the result from the AI processing
-            displayResult(aiResponse.data); // Use AI response for display
+
+            displayResult(aiResponse.data);
         } catch (error) {
             console.error('Error submitting the drawing:', error);
             setResponse('Error processing your drawing');
@@ -62,7 +58,7 @@ const DrawingPad = ({ setResponse }) => {
 
     const displayResult = (result) => {
         if (result.response) {
-            setResponse(result.response); // Update the response state with AI's response
+            setResponse(result.response);
         } else {
             setResponse('No output received from AI.');
         }
@@ -88,3 +84,4 @@ const DrawingPad = ({ setResponse }) => {
 };
 
 export default DrawingPad;
+
