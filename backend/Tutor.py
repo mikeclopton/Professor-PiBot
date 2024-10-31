@@ -1,47 +1,54 @@
-import os
-from langchain_groq import ChatGroq
+import requests
 from Prompt import get_tutor_prompt
-from Validator import validate_solution  # Import the validator to check correctness
+from Validator import validate_solution
 
-if "GROQ_API_KEY" not in os.environ:
-    os.environ["GROQ_API_KEY"] = "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"
+api_key = 'e1SfwpX1wtZ8NnfjThENLSbV13NhhdP2XinEXILOoc5aAdSm'
+api_url = 'https://fauengtrussed.fau.edu/provider/generic/chat/completions'
 
-# Initialize the LLM for solving problems
-tutor_llm = ChatGroq(
-    model="llama3-8b-8192",
-    temperature=0,
-    max_tokens=None,
-    timeout=None,
-    max_retries=2,
-)
+headers = {
+    'Content-Type': 'application/json',
+    'Authorization': f'Bearer {api_key}'
+}
 
-tutor_prompt = get_tutor_prompt()
-
-def solve_problem_with_validation(problem, max_attempts=3):
-    """Solve the math problem using the LLM and re-attempt if the validation fails."""
+def solve_problem_with_validation(problem, max_attempts=5):
+    """Solve the math problem using Trussed AI, re-attempting if validation fails."""
     attempt = 0
     is_valid = False
     solution = None
+    modified_problem = problem
 
     while attempt < max_attempts and not is_valid:
         attempt += 1
-        print(f"Attempt {attempt}: Solving problem '{problem}'")
+        print(f"Attempt {attempt}: Solving problem '{modified_problem}'")
 
-        # Generate a solution from the tutor LLM
-        result = tutor_prompt | tutor_llm
-        solution = result.invoke({"problem": problem}).content
-        print(f"Tutor LLM solution: {solution}")
+        # Use tutor prompt template
+        conversation_history = [
+            {'role': 'system', 'content': get_tutor_prompt().format(problem=modified_problem)}
+        ]
+        data = {
+            'model': 'gpt-4o',
+            'messages': conversation_history,
+            'max_tokens': 500,
+            'temperature': 0.5
+        }
 
-        # Validate the solution
-        validation_response = validate_solution(problem, solution)
-        print(f"Validation result: {validation_response}")
-
-        if "correct" in validation_response.lower():
-            is_valid = True
+        response = requests.post(api_url, headers=headers, json=data)
+        if response.status_code == 200:
+            solution = response.json().get('choices', [{}])[0].get('message', {}).get('content', '')
+            print(f"Tutor LLM solution: {solution}")
         else:
-            print(f"Solution was incorrect. Tutor will attempt again...")
+            print(f"Failed to get response from tutor LLM: {response.status_code} - {response.text}")
+            return "Error with tutor LLM."
 
-    if is_valid:
-        return solution  # Return the correct solution
-    else:
-        return f"Could not solve the problem correctly after {max_attempts} attempts."
+        # Validate solution
+        validation_feedback = validate_solution(problem, solution)
+        print(f"Validation feedback: {validation_feedback}")
+
+        if "incorrect" in validation_feedback.lower():
+            modified_problem = f"{problem}\n\nCorrection suggested by validator:\n{validation_feedback}"
+            is_valid = False
+            print("Solution was incorrect. Tutor will attempt again with additional feedback.")
+        else:
+            is_valid = True
+
+    return solution if is_valid else f"Could not solve the problem correctly after {max_attempts} attempts."

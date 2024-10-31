@@ -1,23 +1,32 @@
-import os
-from langchain_groq import ChatGroq
+import requests
 from Prompt import get_validation_prompt
 
-if "GROQ_API_KEY" not in os.environ:
-    os.environ["GROQ_API_KEY"] = "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"
+api_key = 'e1SfwpX1wtZ8NnfjThENLSbV13NhhdP2XinEXILOoc5aAdSm'
+api_url = 'https://fauengtrussed.fau.edu/provider/generic/chat/completions'
 
-# Initialize the LLM for validating solutions
-validator_llm = ChatGroq(
-    model="llama3-8b-8192",
-    temperature=0,
-    max_tokens=None,
-    timeout=None,
-    max_retries=2,
-)
-
-validation_prompt = get_validation_prompt()
+headers = {
+    'Content-Type': 'application/json',
+    'Authorization': f'Bearer {api_key}'
+}
 
 def validate_solution(problem, solution):
-    """Validate the solution using the LLM."""
-    validation_result = validation_prompt | validator_llm
-    response = validation_result.invoke({"problem": problem, "solution": solution})
-    return response.content
+    """Validate the solution using Trussed AI."""
+    # Use validation prompt template
+    conversation_history = [
+        {'role': 'system', 'content': get_validation_prompt().format(problem=problem, solution=solution)}
+    ]
+    data = {
+        'model': 'gpt-4o',
+        'messages': conversation_history,
+        'max_tokens': 500,
+        'temperature': 0.5
+    }
+
+    response = requests.post(api_url, headers=headers, json=data)
+    if response.status_code == 200:
+        validation_feedback = response.json().get('choices', [{}])[0].get('message', {}).get('content', '')
+        print(f"Validation feedback: {validation_feedback}")
+        return validation_feedback
+    else:
+        print(f"Failed to get response from validator LLM: {response.status_code} - {response.text}")
+        return "Error in validator LLM feedback."

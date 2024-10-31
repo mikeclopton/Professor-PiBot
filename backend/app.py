@@ -9,7 +9,6 @@ from dotenv import load_dotenv
 from Tutor import solve_problem_with_validation
 import requests
 
-
 # Load environment variables
 load_dotenv()
 
