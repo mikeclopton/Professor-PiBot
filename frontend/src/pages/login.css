@@ -1,9 +1,9 @@
 /* login.css */
 .container {
-    display: flex;
-    justify-content: center; /* Centers items horizontally */
-    align-items: center; /* Centers items vertically */
-    height: 100vh; /* Full viewport height for full-page centering */
+    gap: 20px;
+    width: 100vw; /* Set to full viewport width */
+    height: 100vh; 
+    margin: 60px auto; /* Vertical margin only */
 }
 
 .login {

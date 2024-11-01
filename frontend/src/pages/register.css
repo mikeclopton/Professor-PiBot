@@ -4,6 +4,7 @@
     justify-content: center; /* Centers items horizontally */
     align-items: center; /* Centers items vertically */
     height: 100vh; /* Full viewport height for full-page centering */
+    width: 100vw;
 }
 
 .register {

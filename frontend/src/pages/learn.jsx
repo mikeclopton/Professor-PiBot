@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import './learn.css';
-import Input from '../components/input';
+import TutorInput from '../components/tutorinput'; // Import the new combined component
 import Output from '../components/output';
-import Tutor from '../components/tutor';
+import Chat from '../components/Chat';
 import axios from 'axios';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 
@@ -46,23 +46,25 @@ function Learn() {
     <div className="learn">
       <div className="learn-input">
         <h2>
-          Input <i className="fas fa-pencil-alt"></i>
+          Tutor & Input <i className="fas fa-pencil-alt"></i>
         </h2>
-        {/* Pass userId to the Input component */}
-        <Input setResponse={setResponse} setLatexPreview={setLatexPreview} module={module} userId={userId} />
+        <div className="course">
+          <TutorInput 
+            setResponse={setResponse} 
+            setLatexPreview={setLatexPreview} 
+            module={module} 
+            userId={userId} 
+            part={part} // Pass part if needed for functionality
+          />
+        </div>
       </div>
-      <div className="learn-output">
+      <div className="learn-chat">
         <h2>
-          Output <i className="fas fa-eye"></i>
+          Chat With Tutor <i className="fas fa-eye"></i>
         </h2>
-        <Output response={response} latexPreview={latexPreview} />
-      </div>
-      <div className="learn-tutor">
-        <h2>
-          Tutor <i className="fas fa-chalkboard-teacher"></i>
-        </h2>
-        {/* Pass module and part to Tutor component */}
-        <Tutor module={module} part={part} />
+        <div className= "chat">
+          <Chat response={response} latexPreview={latexPreview} />
+        </div>
       </div>
     </div>
   );
