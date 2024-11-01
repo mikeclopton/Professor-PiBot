@@ -6,12 +6,14 @@ import EditInfoForm from '../components/EditInfoForm'; // Import the EditInfoFor
 
 function Dashboard() {
     const [userInfo, setUserInfo] = useState(null);
-    const [progress, setProgress] = useState([]);
+    const [progress, setProgress] = useState(null); // Initially null to differentiate from empty progress data
     const [isEditing, setIsEditing] = useState(false); // State to manage edit form visibility
+    const [isLoading, setIsLoading] = useState(true); // Loading state to manage API fetch
 
     useEffect(() => {
         const fetchUserData = async () => {
             try {
+                setIsLoading(true); // Start loading
                 const response = await fetch('http://127.0.0.1:5000/api/user', {
                     method: 'GET',
                     headers: {
@@ -25,9 +27,11 @@ function Dashboard() {
 
                 const data = await response.json();
                 setUserInfo(data.user);
-                setProgress(data.progress); // Assuming progress data is returned in the response
+                setProgress(data.progress || []); // Set an empty array if no progress data
             } catch (error) {
                 console.error('Error fetching user data:', error);
+            } finally {
+                setIsLoading(false); // Stop loading
             }
         };
 
@@ -41,6 +45,10 @@ function Dashboard() {
         }));
         setIsEditing(false); // Close the edit form after saving changes
     };
+
+    if (isLoading) {
+        return <div className="dashboard"><p>Loading user data...</p></div>;
+    }
 
     return (
         <div className="dashboard">
@@ -61,16 +69,16 @@ function Dashboard() {
                         )}
                     </div>
                 ) : (
-                    <p>Loading user information...</p>
+                    <p>Error loading user information. Please try again.</p>
                 )}
             </div>
             <div className="dashboard-progress">
                 <h3><i className="fas fa-chart-line"></i> Your Progress</h3>
-                {progress.length > 0 ? (
+                {progress && progress.length > 0 ? (
                     <div className="progress-placeholder">
-                        {progress.map((topic, index) => (
+                        {progress.map((moduleProgress, index) => (
                             <p key={index}>
-                                <i className="fas fa-book-open"></i> {topic.name}: {topic.completion}% Complete
+                                <i className="fas fa-book-open"></i> {moduleProgress.module_name}: {moduleProgress.completion_percentage}% Complete
                             </p>
                         ))}
                     </div>

@@ -1,0 +1,28 @@
+{
+  "modules": {
+    "2": {
+      "title": "Combinatorial Problems",
+      "parts": {
+        "1": {
+          "questions": [
+            {
+              "number": 1,
+              "question": "Symbolize the statement 'John is healthy and wealthy but not wise' using h for 'healthy,' w for 'wealthy,' and s for 'wise.'",
+              "answer": "h ∧ w ∧ ∼ s"
+            },
+            {
+              "number": 2,
+              "question": "Write the truth table for the logical expression ∼ (p ∧ q) ∨ (p ∨ q).",
+              "answer": "This table shows that it is a tautology, as it evaluates to True in all cases."
+            },
+            {
+              "number": 3,
+              "question": "Is the statement form p ∨ (p ∧ q) logically equivalent to q?",
+              "answer": "Not logically equivalent as their truth values do not match in all cases."
+            }
+          ]
+        }
+      }
+    }
+  }
+}

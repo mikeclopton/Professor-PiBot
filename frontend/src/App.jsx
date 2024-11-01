@@ -5,6 +5,7 @@ import Learn from './pages/learn.jsx';
 import Dashboard from './pages/dashboard.jsx';
 import Login from './pages/login.jsx';
 import Register from './pages/register.jsx';
+import Module from './pages/module.jsx';
 import logo from './assets/logo.jpg';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 
@@ -51,7 +52,7 @@ function App() {
   // Generate the routing element tree
   const element = useRoutes([
     { 
-      path: '/',
+      path: '/learn',
       element: <Learn />
     },
     {
@@ -65,6 +66,10 @@ function App() {
     {
       path: '/register',
       element: <Register />
+    },
+    {
+      path: '/modules', // Add the route for the Module component
+      element: <Module />
     }
   ]);
 
@@ -74,7 +79,7 @@ function App() {
         <header className="App-header">
           <img src={logo} alt="DiscreteTutor Logo" className="logo" />
           <div className="nav">
-            <Link to="/">
+            <Link to="/learn">
               <button className="HeaderButton">
                 <i className="fas fa-book-open"></i> Learn
               </button>
@@ -84,8 +89,13 @@ function App() {
                 <i className="fas fa-tachometer-alt"></i> Dashboard
               </button>
             </Link>
+            <Link to="/modules"> {/* Link to the modules page */}
+              <button className="HeaderButton">
+                <i className="fas fa-th-list"></i> Modules
+              </button>
+            </Link>
             {!isLoggedIn ? (
-              <>
+              <>  
                 <Link to="/login">
                   <button className="HeaderButton">
                     <i className="fas fa-sign-in-alt"></i> Log in
@@ -111,3 +121,4 @@ function App() {
 }
 
 export default App;
+

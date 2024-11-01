@@ -1,0 +1,114 @@
+{
+    "modules": {
+      "6": {
+        "title": "Predicates and Logical Statements",
+        "parts": {
+          "1": {
+            "questions": [
+              {
+                "number": 1,
+                "question": "Construct a truth table for the statement form: (p ∧ r) ↔ (q ∧ r)",
+                "answer": {
+                  "truth_table": [
+                    {"p": "T", "q": "T", "r": "T", "p∧r": "T", "q∧r": "T", "result": "T"},
+                    {"p": "T", "q": "T", "r": "F", "p∧r": "F", "q∧r": "F", "result": "T"},
+                    {"p": "T", "q": "F", "r": "T", "p∧r": "T", "q∧r": "F", "result": "F"},
+                    {"p": "T", "q": "F", "r": "F", "p∧r": "F", "q∧r": "F", "result": "T"},
+                    {"p": "F", "q": "T", "r": "T", "p∧r": "F", "q∧r": "T", "result": "F"},
+                    {"p": "F", "q": "T", "r": "F", "p∧r": "F", "q∧r": "F", "result": "T"},
+                    {"p": "F", "q": "F", "r": "T", "p∧r": "F", "q∧r": "F", "result": "T"},
+                    {"p": "F", "q": "F", "r": "F", "p∧r": "F", "q∧r": "F", "result": "T"}
+                  ]
+                }
+              },
+              {
+                "number": 2,
+                "question": "Rewrite p ∨ ¬q → r using logical equivalences: (a) without → or ↔ using p → q ≡ ¬p ∨ q and p ↔ q ≡ (¬p ∨ q) ∧ (¬q ∨ p), (b) using only ∧ and ¬ with p ∨ q ≡ ¬(¬p ∧ ¬q)",
+                "answer": {
+                  "steps": [
+                    {
+                      "step": "p ∨ ¬q → r",
+                      "result": "¬(p ∨ ¬q) ∨ r",
+                      "rule": "p → q ≡ ¬p ∨ q"
+                    },
+                    {
+                      "step": "¬(p ∨ ¬q) ∨ r",
+                      "result": "(¬p ∧ q) ∨ r",
+                      "rule": "DeMorgan's Law"
+                    },
+                    {
+                      "step": "(¬p ∧ q) ∨ r",
+                      "result": "(¬p ∨ r) ∧ (q ∨ r)",
+                      "rule": "Distribution"
+                    }
+                  ]
+                }
+              },
+              {
+                "number": 3,
+                "question": "Write negations, contrapositives, converse and inverse for: (a) If P is a triangle, then P is an equilateral triangle. (b) If John is Mike's brother, then Sarah is his sister and Paul is his cousin.",
+                "answer": {
+                  "statement_a": {
+                    "negation": "P is a triangle and P is not an equilateral triangle",
+                    "contrapositive": "If P is not an equilateral triangle, then P is not a triangle",
+                    "converse": "If P is an equilateral triangle, then P is a triangle",
+                    "inverse": "If P is not a triangle, then P is not an equilateral triangle"
+                  },
+                  "statement_b": {
+                    "negation": "John is Mike's brother and Sarah is not his sister or Paul is not his cousin",
+                    "contrapositive": "If Sarah is not his sister or Paul is not his cousin, then John is not Mike's brother",
+                    "converse": "If Sarah is his sister and Paul is his cousin, then John is Mike's brother",
+                    "inverse": "If John is not Mike's brother, then Sarah is not his sister or Paul is not his cousin"
+                  }
+                }
+              },
+              {
+                "number": 4,
+                "question": "Which argument form exhibits the converse error?",
+                "answer": {
+                  "correct": "a",
+                  "explanation": "The argument 'If Alice finished her project, then she will present it. Alice presented her project. Therefore, Alice finished her project.' follows the form p → q, q, ∴ p, which is the converse error",
+                  "logical_form": {
+                    "premises": ["p → q", "q"],
+                    "conclusion": "p",
+                    "fallacy_type": "converse error"
+                  }
+                }
+              },
+              {
+                "number": 5,
+                "question": "Use truth tables to determine validity of argument forms: (a) (p ∨ q) → ¬r, ¬p ∧ q, q → p, ∴ ¬r (b) p → q, r → q, ∴ (p ∨ r) → q",
+                "answer": {
+                  "argument_a": {
+                    "valid": false,
+                    "explanation": "Invalid because in critical rows #3 and 7, premises are True but conclusion is False",
+                    "truth_table_provided": true
+                  },
+                  "argument_b": {
+                    "valid": true,
+                    "explanation": "Valid because all critical rows have a true conclusion",
+                    "truth_table_provided": true
+                  }
+                }
+              },
+              {
+                "number": 6,
+                "question": "Let Q(x) be the predicate 'x² < 2x'. (a) Evaluate Q(1), Q(2), Q(0), Q(-1), Q(3) (b) Find truth set in R (c) Find truth set in R⁺",
+                "answer": {
+                  "evaluations": {
+                    "Q(1)": {"equation": "1² < 2·1", "result": true},
+                    "Q(2)": {"equation": "2² < 2·2", "result": false},
+                    "Q(0)": {"equation": "0² < 2·0", "result": false},
+                    "Q(-1)": {"equation": "(-1)² < 2·(-1)", "result": false},
+                    "Q(3)": {"equation": "3² < 2·3", "result": false}
+                  },
+                  "truth_set_R": "(0, 2)",
+                  "truth_set_R_positive": "(0, 2)"
+                }
+              }
+            ]
+          }
+        }
+      }
+    }
+  }

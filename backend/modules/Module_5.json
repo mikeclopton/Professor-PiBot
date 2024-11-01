@@ -1,0 +1,160 @@
+{
+    "modules": {
+      "5": {
+        "title": "Functions",
+        "parts": {
+          "1": {
+            "questions": [
+              {
+                "number": 1,
+                "question": "Fill in each blank with the word most or least. (a) A function F is one-to-one if, and only if, each element in the co-domain of F is the image of at ___ one element in the domain of F. (b) A function F is onto if, and only if, each element in the co-domain of F is the image of at ___ one element in the domain of F.",
+                "answer": {
+                  "a": "most",
+                  "b": "least"
+                }
+              },
+              {
+                "number": 2,
+                "question": "When asked to state the definition of one-to-one, a student replies, 'A function f is one-to-one if, and only if, every element of X is sent by f to exactly one element of Y.' Give a counterexample to show that the student's reply is incorrect.",
+                "answer": {
+                  "explanation": "The student's definition describes a general function, not specifically a one-to-one function.",
+                  "counterexample": "f : R → R defined by f(x) = x². This function sends every element of R to exactly one element of R, satisfying the student's definition. However, it is not one-to-one because it sends both x = 1 and x = -1 to the same element y = 1 in R.",
+                  "correct_definition": "A function f is one-to-one if, and only if, for any two elements x₁, x₂ in the domain, f(x₁) = f(x₂) implies that x₁ = x₂."
+                }
+              },
+              {
+                "number": 3,
+                "question": "Let X = {1, 5, 9} and Y = {3, 4, 7}. Define f : X → Y by f(1) = 4, f(5) = 7, f(9) = 4, and g : X → Y by g(1) = 7, g(5) = 3, g(9) = 4. For each function determine if it is one-to-one and/or onto.",
+                "answer": {
+                  "function_f": {
+                    "one_to_one": false,
+                    "onto": false,
+                    "explanation": "Not one-to-one because f(1) = f(9) = 4. Not onto because 3 in Y has no pre-image in X."
+                  },
+                  "function_g": {
+                    "one_to_one": true,
+                    "onto": true,
+                    "explanation": "One-to-one because each element maps to unique value. Onto because every element in Y (7,3,4) is mapped to by some element in X."
+                  }
+                }
+              },
+              {
+                "number": 4,
+                "question": "Let X = {a, b, c, d} and Y = {e, f, g}. Given arrow diagrams for functions F and G, determine if each is one-to-one and/or onto.",
+                "answer": {
+                  "function_F": {
+                    "one_to_one": false,
+                    "onto": true,
+                    "explanation": "Not one-to-one because elements c and d map to same element e. Onto because each element in Y has a pre-image in X."
+                  },
+                  "function_G": {
+                    "one_to_one": false,
+                    "onto": false,
+                    "explanation": "Not one-to-one due to multiple elements mapping to same value. Not onto because element g has no pre-image."
+                  }
+                }
+              },
+              {
+                "number": 5,
+                "question": "Let X = {a, b, c} and Y = {w, x, y, z}. Given arrow diagrams for functions H and K, determine if each is one-to-one and/or onto.",
+                "answer": {
+                  "function_H": {
+                    "one_to_one": false,
+                    "onto": false,
+                    "explanation": "Not one-to-one because b and c map to y. Not onto because z has no pre-image."
+                  },
+                  "function_K": {
+                    "one_to_one": true,
+                    "onto": false,
+                    "explanation": "One-to-one because each element maps to distinct element. Not onto because z has no pre-image."
+                  }
+                }
+              },
+              {
+                "number": 6,
+                "question": "Let X = {1, 2, 3}, Y = {1, 2, 3, 4}, and Z = {1, 2}. Define: (a) A one-to-one but not onto function f:X→Y (b) An onto but not one-to-one function g:X→Z (c) A function h:X→X neither one-to-one nor onto (d) A one-to-one and onto function k:X→X that is not the identity function",
+                "answer": {
+                  "a": {
+                    "example": "f(1) = 2, f(2) = 3, f(3) = 4",
+                    "explanation": "One-to-one because each maps to distinct element, not onto because 1 has no pre-image"
+                  },
+                  "b": {
+                    "example": "g(1) = 1, g(2) = 1, g(3) = 2",
+                    "explanation": "Onto because all elements in Z have pre-images, not one-to-one because g(1) = g(2)"
+                  },
+                  "c": {
+                    "example": "h(1) = 2, h(2) = 2, h(3) = 2",
+                    "explanation": "Neither one-to-one (multiple elements map to 2) nor onto (1 and 3 have no pre-images)"
+                  },
+                  "d": {
+                    "example": "k(1) = 2, k(2) = 3, k(3) = 1",
+                    "explanation": "One-to-one and onto because each element has unique mapping, not identity because elements don't map to themselves"
+                  }
+                }
+              },
+              {
+                "number": 7,
+                "question": "(a) Define g : Z → Z by g(n) = 4n - 5. Prove or disprove if g is one-to-one and/or onto. (b) Define G : R → R by G(x) = 4x - 5. Is G onto? Prove or give counterexample.",
+                "answer": {
+                  "part_a": {
+                    "one_to_one": {
+                      "result": true,
+                      "proof": "Let g(n₁) = g(n₂). Then 4n₁ - 5 = 4n₂ - 5. Adding 5 to both sides: 4n₁ = 4n₂. Dividing by 4: n₁ = n₂."
+                    },
+                    "onto": {
+                      "result": false,
+                      "counterexample": "No integer n exists where 4n - 5 = 1, as n would need to be 1.5"
+                    }
+                  },
+                  "part_b": {
+                    "onto": {
+                      "result": true,
+                      "proof": "For any y ∈ R, x = (y + 5)/4 gives G(x) = y, proving G is onto"
+                    }
+                  }
+                }
+              },
+              {
+                "number": 8,
+                "question": "(a) Define H : R → R by H(x) = x², determine if one-to-one and/or onto. (b) Define K : Rₙₒₙₙₑ𝒈 → Rₙₒₙₙₑ𝒈 by K(x) = x², is K onto?",
+                "answer": {
+                  "part_a": {
+                    "one_to_one": {
+                      "result": false,
+                      "counterexample": "H(-1) = H(1) = 1"
+                    },
+                    "onto": {
+                      "result": false,
+                      "counterexample": "No real x exists where x² = -1"
+                    }
+                  },
+                  "part_b": {
+                    "onto": {
+                      "result": true,
+                      "proof": "For any y ∈ Rₙₒₙₙₑ𝒈, x = √y gives K(x) = y"
+                    }
+                  }
+                }
+              },
+              {
+                "number": 9,
+                "question": "Determine if f(x) = (x + 1)/x, for all real numbers x ≠ 0 is one-to-one. Justify your answer.",
+                "answer": {
+                  "one_to_one": true,
+                  "proof": "If f(x₁) = f(x₂) then (x₁ + 1)/x₁ = (x₂ + 1)/x₂. Cross multiplying: x₂(x₁ + 1) = x₁(x₂ + 1). Expanding: x₁x₂ + x₂ = x₁x₂ + x₁. Subtracting x₁x₂ from both sides: x₂ = x₁, proving f is one-to-one."
+                }
+              },
+              {
+                "number": 10,
+                "question": "Determine if f(x) = x/(x² + 1), for all real numbers x is one-to-one.",
+                "answer": {
+                  "one_to_one": false,
+                  "explanation": "Through algebraic manipulation, assuming f(x₁) = f(x₂), and choosing x₁ = x₂ = 1, we get a contradiction, proving the function is not one-to-one."
+                }
+              }
+            ]
+          }
+        }
+      }
+    }
+  }

@@ -6,24 +6,77 @@
         "1": {
           "questions": [
             {
+              "number": 1,
               "question": "How many different ways can we order the three different elements of the set A = {a, b, c}?",
               "answer": "6"
             },
             {
+              "number": 2,
               "question": "How many ways can you select 2 items out of 5?",
               "answer": "10"
-            }
-          ]
-        },
-        "2": {
-          "questions": [
-            {
-              "question": "In horse racing, to bet the 'daily double' is to select the winners of the first two races of the day...",
-              "answer": "Varies based on the number of horses in the races"
             },
             {
+              "number": 3,
+              "question": "In horse racing, to bet the 'daily double' is to select the winners of the first two races of the day.",
+              "answer": "Varies based on the number of horses in the races."
+            },
+            {
+              "number": 4,
               "question": "Calculate the probability of drawing a red card from a standard deck.",
               "answer": "1/2"
+            }
+          ]
+        }
+      }
+    },
+    "2": {
+      "title": "Combinatorial Problems",
+      "parts": {
+        "1": {
+          "questions": [
+            {
+              "number": 1,
+              "question": "As a freshman, suppose you had to take two of four lab science courses, one of two literature courses, two of three math courses, and one of seven physical education courses. Disregarding possible time conflicts, how many different schedules do you have to choose from?",
+              "answer": "168"
+            },
+            {
+              "number": 2,
+              "question": "Suppose each single character in a computer uses eight bits. (a) How many different bit patterns are there? (b) How many bit patterns are palindromes (the same backwards as forwards)?",
+              "answer": "a) 256 patterns, b) 16 palindromes."
+            },
+            {
+              "number": 3,
+              "question": "Automobile license plates in Massachusetts usually consist of three digits followed by three letters. How many different plates of this type could be made?",
+              "answer": "17,576,000"
+            }
+          ]
+        }
+      }
+    },
+    "3": {
+      "title": "Probability",
+      "parts": {
+        "1": {
+          "questions": [
+            {
+              "number": 1,
+              "question": "(a) Let A = {1, 2, 3, 4}. Determine the number of different subsets of A. (b) Let A = {1, 2, 3, 4, 5}. Determine the number of proper subsets of A.",
+              "answer": "a) 16 subsets, b) 31 proper subsets."
+            },
+            {
+              "number": 2,
+              "question": "How many integers from 100 to 999 can be written in base ten without using the digit 7?",
+              "answer": "512"
+            },
+            {
+              "number": 3,
+              "question": "Consider three persons, A, B, and C, who are to be seated in a row of three chairs. Suppose A and B are identical twins. How many seating arrangements of these persons can there be?",
+              "answer": "a) 6 arrangements for strangers, b) 4 for mother."
+            },
+            {
+              "number": 4,
+              "question": "How many ways can a student do a ten-question true-false exam if he or she can choose not to answer any number of questions?",
+              "answer": "59,049 ways"
             }
           ]
         }
@@ -31,5 +84,3 @@
     }
   }
 }
-
-  
