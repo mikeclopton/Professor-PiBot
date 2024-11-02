@@ -6,9 +6,8 @@ from werkzeug.security import generate_password_hash, check_password_hash
 import json
 import os
 from dotenv import load_dotenv
-from MathTutorValidator import validate_solution, solve_problem
+from Tutor import solve_problem_with_validation
 import requests
-
 
 # Load environment variables
 load_dotenv()
@@ -196,10 +195,9 @@ def process_input():
         print("Error storing input in Supabase:", str(e))
     
     # Process the input using the MathTutorValidator
-    solution = solve_problem(user_input)
-    validation = validate_solution(user_input, solution)
+    solution = solve_problem_with_validation(user_input)
 
-    return jsonify({'response': solution, 'validation': validation})
+    return jsonify({'response': solution})
 
 
 @app.route('/api/update_user_info', methods=['PUT'])
