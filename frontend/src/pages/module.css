@@ -1,17 +1,18 @@
 .module-container {
-    max-width: 800px;
-    margin: 0 auto;
-    padding: 20px;
+    width: 100vw; /* Reduced width for better aesthetics */
+    margin: 60px auto;
+    padding: 30px; /* Increased padding for more space */
     text-align: center;
-    background-color: #f9f9f9;
+    background-color: #0F2D44; /* A cleaner background color */
     border-radius: 8px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1); /* Deeper shadow for depth */
 }
 
 .module-title {
-    font-size: 2rem;
+    font-size: 2.5rem; /* Larger title font size */
     margin-bottom: 20px;
-    color: #333;
+    color: #ffffff; /* Darker text for better readability */
+    font-weight: 600; /* Bold title */
 }
 
 .module-list {
@@ -24,16 +25,23 @@
 }
 
 .module-button {
-    background-color: #007bff;
+    background-color: #007bff; /* Primary color */
     color: white;
     border: none;
-    padding: 10px 20px;
+    padding: 12px 24px; /* Slightly larger padding */
     font-size: 1.2rem;
     border-radius: 5px;
     cursor: pointer;
-    transition: background-color 0.3s;
+    transition: background-color 0.3s, transform 0.2s; /* Added transform for button effect */
+    width: 100%; /* Full width for buttons */
 }
 
 .module-button:hover {
-    background-color: #0056b3;
+    background-color: #0056b3; /* Darker on hover */
+    transform: translateY(-2px); /* Slight lift effect */
+}
+
+.module-button:focus {
+    outline: none; /* Remove default outline */
+    box-shadow: 0 0 0 3px rgba(38, 143, 255, 0.5); /* Custom focus style */
 }

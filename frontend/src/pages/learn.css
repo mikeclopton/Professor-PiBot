@@ -4,13 +4,14 @@
     grid-template-columns: 1fr 2fr 1fr;
     grid-template-rows: 1fr 1fr; 
     gap: 20px;
-    width: 1200px;
-    height: 75vh; 
-    margin: 60px auto;
+    width: 100vw; /* Set to full viewport width */
+    height: 100vh; 
+    margin: 60px auto; /* Vertical margin only */
+    color: white;
 }
 
 .learn-input,
-.learn-output,
+.learn-chat,
 .learn-tutor {
     background-color: #234996;
     padding: 20px;
@@ -21,39 +22,45 @@
     justify-content: flex-start;
     text-align: center;
     overflow-y: auto; 
+    width: 100%; /* Ensure full width for each component */
+    height: 100%; /* Ensure full height for each component */
 }
 
 .learn-tutor {
     grid-column: 1 / 3; 
     grid-row: 1 / 2; 
-    width: 100%; 
-    height: 100%;
 }
 
 .learn-input {
     grid-column: 1 / 3;
-    grid-row: 2 / 3;
-    width: 100%; 
-    height: 100%; 
+    grid-row: 1 / 3;
 }
 
-.learn-output {
+
+
+
+.learn-chat {
     grid-column: 3 / 4; 
     grid-row: 1 / 3; 
-    width: 100%; 
-    height: 100%;
-    overflow-y: auto; /* Allow vertical scrolling */
-    white-space: normal; /* Allow text to wrap normally */
-    text-align: center; /* Left align text for better readability */
+    max-height: 75vh; /* Maximum height for the chat area */
+    padding: 20px; /* Add padding */
+    overflow: hidden; /* Prevent overflow of the parent container */
+    text-align: center;
 }
+
+.chat {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    text-align: center;
+    height: 100%; /* Ensure full height for the chat */
+    width: 100%; /* Ensure full width for the chat */
+    overflow-y: auto; /* Enable vertical scrolling */
+}
+
 
 input[type="radio"] {
     margin-right: 5px; /* Space between radio button and label */
-}
-
-h2, h3, p{
-    color: #fff; /* Header color to stand out against the background */
-    text-align: center; /* Center align the header */
 }
 
 textarea {
@@ -108,3 +115,25 @@ button:hover {
     color: #333; /* Color for the filename */
 }
 
+.tutor-input-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; /* Space out the elements */
+    height: 60vh; /* Ensure it takes full height */
+}
+
+
+
+.navigation-buttons {
+    display: flex;
+    justify-content: space-between; /* Distribute space evenly between buttons */
+    margin-top: 20px; /* Space above buttons */
+}
+
+/* Fix the size of the navigation buttons */
+.navigation-buttons button {
+    width: 120px; /* Set a fixed width */
+    height: 40px; /* Set a fixed height */
+    flex: 0 0 auto; /* Prevent buttons from stretching */
+    
+}
