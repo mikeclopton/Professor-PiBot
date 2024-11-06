@@ -118,22 +118,34 @@ button:hover {
 .tutor-input-container {
     display: flex;
     flex-direction: column;
-    justify-content: space-between; /* Space out the elements */
-    height: 60vh; /* Ensure it takes full height */
+    justify-content: space-between;
+    align-items: center;
+    height: 60vh;
+    padding: 20px;
+    border-radius: 8px;
+}
+
+/* Question container for separation */
+.question-container {
+    width: 100%;
+    text-align: center;
+    margin-bottom: 20px;
+    font-size: 18px;
 }
 
 
 
+/* Navigation buttons styling */
 .navigation-buttons {
     display: flex;
-    justify-content: space-between; /* Distribute space evenly between buttons */
-    margin-top: 20px; /* Space above buttons */
+    justify-content: space-between;
+    width: 100%;
+    margin-top: 20px;
 }
 
 /* Fix the size of the navigation buttons */
 .navigation-buttons button {
-    width: 120px; /* Set a fixed width */
-    height: 40px; /* Set a fixed height */
-    flex: 0 0 auto; /* Prevent buttons from stretching */
-    
+    width: 120px;
+    height: 40px;
+    flex: 0 0 auto;
 }
