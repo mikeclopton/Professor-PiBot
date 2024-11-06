@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import './login.css';
+import '@fortawesome/fontawesome-free/css/all.min.css';
 
 function Login() {
     const [email, setEmail] = useState('');
@@ -41,6 +42,7 @@ function Login() {
                 {errorMessage && <p className="error-message">{errorMessage}</p>}
                 <form className="login-input" onSubmit={handleLogin}>
                     <div className="input-group">
+                        <i className="fas fa-envelope icon"></i>
                         <input
                             type="email"
                             placeholder="Email"
@@ -50,6 +52,7 @@ function Login() {
                         />
                     </div>
                     <div className="input-group">
+                        <i className="fas fa-lock icon"></i>
                         <input
                             type="password"
                             placeholder="Password"
@@ -58,7 +61,9 @@ function Login() {
                             required
                         />
                     </div>
-                    <button type="submit">Login</button>
+                    <button type="submit">
+                        <i className="fas fa-sign-in-alt"></i> Login
+                    </button>
                     <p className="link">
                         Don’t have an account? <Link to="/register">Register here</Link>
                     </p>

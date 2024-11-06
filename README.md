@@ -29,11 +29,24 @@ Open a terminal
 
 Make sure you are in Professor PiBot root folder
 
-In Terminal: cd backend
+Terminal 1 (Backend Setup)
 
-In Terminal: python -m venv venv
+cd backend
+python -m venv venv
 
-In Terminal: venv\Scripts\activate
+venv/scripts/activate
+
+pip install -r requirements.txt
+
+python app.py
+
+Terminal 2 (Frontend Setup)
+
+cd frontend
+
+npm install
+
+npm run dev
 
 --If you have an error regarding security, see these instructions:
 
@@ -45,35 +58,9 @@ In Terminal: venv\Scripts\activate
 
 * Go back to your original terminal and re-enter venv\Scripts\activate
 
-In Terminal: pip install -r requirements.txt
-
-3. Set up the frontend:
-
-In Terminal: cd ../frontend
-
-In Terminal: npm install
-
 ## Using Professor PiBot
 
-To use Professor PiBot, follow these steps. Type directly into terminal:
-
-1. Build the frontend:
-
-In Terminal: cd frontend (if not already in this directory)
-
-In Terminal: npm run build
-
-In Terminal: cd ..
-
-2. Start the backend server:
-
-In Terminal: cd backend
-
-In Terminal: venv\Scripts\activate (if not already running the virtual environment)
-
-In Terminal: python app.py
-
-3. Open a web browser and navigate to `http://127.0.0.1:5000`
+To use Professor PiBot, open a web browser and navigate to `http://localhost:5173/
 
 ## Contributing to Professor PiBot
 
