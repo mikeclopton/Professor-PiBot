@@ -1,36 +1,35 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
+import { MathJaxContext } from 'better-react-mathjax';
 import './learn.css';
-import TutorInput from '../components/tutorinput'; // Import the new combined component
+import TutorInput from '../components/tutorinput';
 import Output from '../components/output';
 import Chat from '../components/Chat';
+import ErrorBoundary from '../components/ErrorBoundary';
 import axios from 'axios';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 
 function Learn() {
   const location = useLocation();
   const [response, setResponse] = useState('');
-  const [latexPreview, setLatexPreview] = useState(''); // Manage LaTeX preview
-  const [module, setModule] = useState(1); // Default module value
-  const [part, setPart] = useState(1); // Default part value
-  const [userId, setUserId] = useState(null); // Store userId
+  const [latexPreview, setLatexPreview] = useState('');
+  const [module, setModule] = useState(1);
+  const [part, setPart] = useState(1);
+  const [userId, setUserId] = useState(null);
 
   useEffect(() => {
-    // Parse the query parameters from the URL
     const queryParams = new URLSearchParams(location.search);
     const selectedModule = queryParams.get('module');
     const selectedPart = queryParams.get('part');
 
-    // Set module and part based on URL query parameters
     if (selectedModule) setModule(parseInt(selectedModule));
     if (selectedPart) setPart(parseInt(selectedPart));
 
-    // Fetch user info from backend
     const fetchUser = async () => {
       try {
-        const res = await axios.get('http://127.0.0.1:5000/api/user'); // Adjust the backend URL if needed
+        const res = await axios.get('http://127.0.0.1:5000/api/user');
         if (res.status === 200) {
-          setUserId(res.data.user_id); // Set the user ID
+          setUserId(res.data.user_id);
         } else {
           console.error("Error fetching user data:", res.data.error);
         }
@@ -39,7 +38,7 @@ function Learn() {
       }
     };
 
-    fetchUser(); // Call the function to fetch user session info
+    fetchUser();
   }, [location]);
 
   return (
@@ -54,7 +53,7 @@ function Learn() {
             setLatexPreview={setLatexPreview} 
             module={module} 
             userId={userId} 
-            part={part} // Pass part if needed for functionality
+            part={part}
           />
         </div>
       </div>
@@ -62,9 +61,13 @@ function Learn() {
         <h2>
           Chat With Tutor <i className="fas fa-eye"></i>
         </h2>
-        <div className= "chat">
-          <Chat response={response} latexPreview={latexPreview} />
-        </div>
+        <ErrorBoundary>
+          <MathJaxContext>
+            <div className="chat">
+              <Chat response={response} latexPreview={latexPreview} />
+            </div>
+          </MathJaxContext>
+        </ErrorBoundary>
       </div>
     </div>
   );
