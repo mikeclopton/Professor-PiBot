@@ -1,13 +1,29 @@
-import React from 'react';
+// module.jsx
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import './module.css'; // Make sure to create this CSS file for styling
+import './module.css';
 
 const ModuleSelection = () => {
   const navigate = useNavigate();
-  const modules = [1, 2, 3, 4, 5, 6, 7]; // Example modules array; replace this with your actual module data
+  const [modules, setModules] = useState([1, 2, 3, 4, 5, 6, 7]);
+  const [loading, setLoading] = useState(false);
 
-  const handleModuleSelect = (selectedModule) => {
-    navigate(`/learn?module=${selectedModule}&part=1`);
+  const handleModuleSelect = async (selectedModule) => {
+    if (loading) return; // Prevent double clicks
+    
+    setLoading(true);
+    try {
+      // Only fetch module data once
+      const response = await fetch(`/api/getmodule?module=${selectedModule}`);
+      if (!response.ok) throw new Error('Failed to fetch module');
+      
+      // Navigate after successful fetch
+      navigate(`/learn?module=${selectedModule}&part=1`);
+    } catch (error) {
+      console.error('Error loading module:', error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -16,7 +32,11 @@ const ModuleSelection = () => {
       <ul className="module-list">
         {modules.map((module) => (
           <li key={module} className="module-item">
-            <button className="module-button" onClick={() => handleModuleSelect(module)}>
+            <button 
+              className="module-button" 
+              onClick={() => handleModuleSelect(module)}
+              disabled={loading}
+            >
               Module {module}
             </button>
           </li>

@@ -5,7 +5,6 @@ import './learn.css';
 import TutorInput from '../components/tutorinput';
 import Output from '../components/output';
 import Chat from '../components/Chat';
-import ErrorBoundary from '../components/ErrorBoundary';
 import axios from 'axios';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 
@@ -42,34 +41,35 @@ function Learn() {
   }, [location]);
 
   return (
-    <div className="learn">
-      <div className="learn-input">
-        <h2>
-          Tutor & Input <i className="fas fa-pencil-alt"></i>
-        </h2>
-        <div className="course">
-          <TutorInput 
-            setResponse={setResponse} 
-            setLatexPreview={setLatexPreview} 
-            module={module} 
-            userId={userId} 
-            part={part}
-          />
+    <MathJaxContext>
+      <div className="learn">
+        <div className="learn-input">
+          <h2>
+            Tutor & Input <i className="fas fa-pencil-alt"></i>
+          </h2>
+          <div className="course">
+            <TutorInput 
+              setResponse={setResponse} 
+              setLatexPreview={setLatexPreview} 
+              module={module} 
+              userId={userId} 
+              part={part}
+            />
+          </div>
+        </div>
+        <div className="learn-chat">
+          <h2>
+            Chat With Tutor <i className="fas fa-eye"></i>
+          </h2>
+          <div className="chat">
+            <Chat 
+              response={response} 
+              latexPreview={latexPreview}
+            />
+          </div>
         </div>
       </div>
-      <div className="learn-chat">
-        <h2>
-          Chat With Tutor <i className="fas fa-eye"></i>
-        </h2>
-        <ErrorBoundary>
-          <MathJaxContext>
-            <div className="chat">
-              <Chat response={response} latexPreview={latexPreview} />
-            </div>
-          </MathJaxContext>
-        </ErrorBoundary>
-      </div>
-    </div>
+    </MathJaxContext>
   );
 }
 

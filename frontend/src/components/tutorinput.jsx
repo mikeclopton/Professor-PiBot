@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import DrawingPad from './DrawingPad'; // Ensure this component is imported correctly
+import DrawingPad from './DrawingPad';
 import "//unpkg.com/mathlive";
 
 const TutorInput = ({ module, part, userId }) => {
@@ -81,18 +81,18 @@ const TutorInput = ({ module, part, userId }) => {
     const nextQuestion = () => {
         if (currentQuestionIndex < questions.length - 1) {
             setCurrentQuestionIndex(currentQuestionIndex + 1);
-            setInput(''); // Reset input for the next question
-            setResponseState(''); // Reset response for the next question
-            calculateProgress(currentQuestionIndex + 1); // Calculate progress for the next question
-            updateProgressInBackend(); // Update progress in the backend
+            setInput('');
+            setResponseState('');
+            calculateProgress(currentQuestionIndex + 1);
+            updateProgressInBackend();
         }
     };
 
     const prevQuestion = () => {
         if (currentQuestionIndex > 0) {
             setCurrentQuestionIndex(currentQuestionIndex - 1);
-            setInput(''); // Reset input for the previous question
-            setResponseState(''); // Reset response for the previous question
+            setInput('');
+            setResponseState('');
         }
     };
 
@@ -132,17 +132,51 @@ const TutorInput = ({ module, part, userId }) => {
             return;
         }
 
-        const correctAnswer = currentQuestionData.answer;
-        const isCorrect = input === correctAnswer;
-        setResponseState(isCorrect ? "Correct!" : `Wrong, the correct answer is: ${correctAnswer}`);
+        let processedInput = input;
 
-        if (isCorrect) {
-            calculateProgress(currentQuestionIndex);
-            updateProgressInBackend(); // Update progress in the backend when correct
+        // Handle photo input
+        if (submissionType === 'photo' && image) {
+            try {
+                const photoResponse = await axios.post('http://127.0.0.1:5000/api/process-drawing', {
+                    src: image,
+                    formats: ['latex'],
+                    data_options: {}
+                });
+                processedInput = photoResponse.data.latex_styled || '';
+            } catch (error) {
+                console.error("Error processing photo input:", error);
+                setResponseState("Error processing photo input");
+                return;
+            }
+        }
+
+        try {
+            // Send input for validation
+            const validationResponse = await axios.post('http://127.0.0.1:5000/api/process', {
+                input: processedInput,
+                correctAnswer: currentQuestionData.answer,
+                submissionType: 'validation',
+                inputType: submissionType
+            });
+
+            const isCorrect = validationResponse.data.isCorrect;
+            setResponseState(isCorrect 
+                ? "Correct!" 
+                : `Incorrect. The correct answer is: ${currentQuestionData.answer}`
+            );
+
+            if (isCorrect) {
+                calculateProgress(currentQuestionIndex);
+                await updateProgressInBackend();
+            }
+        } catch (error) {
+            console.error('Error validating answer:', error);
+            setResponseState('Error validating your answer. Please try again.');
         }
     };
 
-
+    if (loading) return <div>Loading questions...</div>;
+    if (error) return <div>{error}</div>;
 
     return (
         <div className="tutor-input-container">
@@ -182,9 +216,12 @@ const TutorInput = ({ module, part, userId }) => {
     
                 {submissionType === 'latex' && (
                     <math-field
-                        value={input}
-                        onChange={handleInputChange}
-                        placeholder="Enter Answer here:"
+                    value={input}
+                    onInput={(evt) => {
+                        console.log('Math input:', evt.target.value); // Debug log
+                        setInput(evt.target.value);
+                    }}
+                    placeholder="Enter Answer here:"
                     />
                 )}
     
@@ -192,9 +229,16 @@ const TutorInput = ({ module, part, userId }) => {
                     <input type="file" accept="image/*" onChange={handleImageChange} />
                 )}
     
-                {submissionType === 'pen' && (
-                    <DrawingPad onInputChange={handleDrawingInput} />
-                )}
+    {submissionType === 'pen' && (
+    <DrawingPad 
+        setResponse={setResponseState}
+        setLatexPreview={setInput}
+        onInputChange={(drawingOutput) => {
+            console.log('Setting input value:', drawingOutput);
+            setInput(drawingOutput);
+        }}
+    />
+)}
     
                 <button type="submit">Submit</button>
             </form>
@@ -205,7 +249,6 @@ const TutorInput = ({ module, part, userId }) => {
             </div>
         </div>
     );
-    
 };
 
 export default TutorInput;
