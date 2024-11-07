@@ -1,10 +1,11 @@
 import React, { useRef, useEffect, useState } from 'react';
 import axios from 'axios';
 
-const DrawingPad = ({ setResponse, setLatexPreview }) => {
+const DrawingPad = ({ setResponse, setLatexPreview, onInputChange }) => {
     const canvasRef = useRef(null);
     const [ctx, setCtx] = useState(null);
     const [drawing, setDrawing] = useState(false);
+    const [preview, setPreview] = useState(null);
 
     useEffect(() => {
         const canvas = canvasRef.current;
@@ -31,41 +32,33 @@ const DrawingPad = ({ setResponse, setLatexPreview }) => {
 
     const clearCanvas = () => {
         ctx.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
+        onInputChange('');
+        setPreview(null);
     };
 
-    const submitDrawing = async () => {
+    const previewDrawing = async () => {
         const image = canvasRef.current.toDataURL('image/png');
         try {
             const response = await axios.post('http://127.0.0.1:5000/api/process-drawing', {
                 src: image,
-                formats: ['text', 'latex_styled'],
+                formats: ['latex_styled'],
                 data_options: { include_asciimath: true }
             });
 
             const latexOutput = response.data.latex_styled;
-            setLatexPreview(latexOutput);  // Update LaTeX preview in Input
-            const aiResponse = await axios.post('http://127.0.0.1:5000/api/process', {
-                input: latexOutput,
-                submissionType: 'drawing'
-            });
-
-            displayResult(aiResponse.data);
+            console.log('DrawingPad latex output:', latexOutput);
+            
+            onInputChange(latexOutput);
+            setLatexPreview(latexOutput);
+            setPreview(latexOutput);
         } catch (error) {
-            console.error('Error submitting the drawing:', error);
+            console.error('Error processing drawing:', error);
             setResponse('Error processing your drawing');
         }
     };
 
-    const displayResult = (result) => {
-        if (result.response) {
-            setResponse(result.response);
-        } else {
-            setResponse('No output received from AI.');
-        }
-    };
-
     return (
-        <div>
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '10px' }}>
             <canvas
                 ref={canvasRef}
                 width={400}
@@ -76,12 +69,23 @@ const DrawingPad = ({ setResponse, setLatexPreview }) => {
                 onMouseUp={stopDrawing}
                 onMouseOut={stopDrawing}
             />
-            <br />
-            <button onClick={clearCanvas}>Clear Drawing</button>
-            <button onClick={submitDrawing}>Submit Drawing</button>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                <button type="button" onClick={clearCanvas}>Clear Drawing</button>
+                <button type="button" onClick={previewDrawing}>Preview</button>
+                {preview && (
+                    <div style={{ 
+                        padding: '8px', 
+                        border: '1px solid #ccc', 
+                        borderRadius: '4px', 
+                        backgroundColor: '#f5f5f5',
+                        marginLeft: '10px'
+                    }}>
+                        <span>Detected: {preview}</span>
+                    </div>
+                )}
+            </div>
         </div>
     );
 };
 
 export default DrawingPad;
-

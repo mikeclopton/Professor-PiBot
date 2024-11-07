@@ -13,7 +13,7 @@ Before you begin, ensure you have met the following requirements:
 
 To install Professor PiBot, follow these steps:
 
-1. Clone the repository:
+Clone the repository:
 
 Go to https://github.com/mikeclopton/Professor-PiBot
 
@@ -23,7 +23,7 @@ Create the folder on your PC
 
 Open in VSCode
 
-2. Set up the backend:
+Set up the backend:
 
 Open a terminal
 
@@ -32,6 +32,7 @@ Make sure you are in Professor PiBot root folder
 Terminal 1 (Backend Setup)
 
 cd backend
+
 python -m venv venv
 
 venv/scripts/activate
@@ -68,15 +69,15 @@ To contribute to Professor PiBot, follow these steps:
 
 Access the Repository:
 
-1. Go to the GitHub repository page https://github.com/mikeclopton/Professor-PiBot
+Go to the GitHub repository page https://github.com/mikeclopton/Professor-PiBot
 
-2. Ensure You're on the Latest Version:
+Ensure You're on the Latest Version:
 
 On the repository page, make sure you're on the main branch (usually shown in a dropdown near the top-left).
 
 Look for a message that says "This branch is up to date with main" to confirm you're seeing the latest version.
 
-3. Clone the Code (Must have GitHub Desktop Installed):
+Clone the Code (Must have GitHub Desktop Installed):
 
 - Open GitHub Desktop.
 - Click **File** > **Clone Repository**.

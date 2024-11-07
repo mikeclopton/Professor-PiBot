@@ -8,6 +8,8 @@ import os
 from dotenv import load_dotenv
 from Tutor import solve_problem_with_validation
 import requests
+import sympy
+from sympy.parsing.latex import parse_latex
 
 # Load environment variables
 load_dotenv()
@@ -16,9 +18,9 @@ load_dotenv()
 app = Flask(__name__, static_folder='../frontend/dist')
 CORS(app, supports_credentials=True)
 
-# Secret key for session management (required for using Flask sessions)
-app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')  # Ensure you have this set in your .env
-app.config['SESSION_TYPE'] = 'filesystem'  # Store sessions on the filesystem
+# Secret key for session management
+app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
+app.config['SESSION_TYPE'] = 'filesystem'
 Session(app)
 
 # Supabase setup
@@ -28,6 +30,72 @@ supabase = create_client(supabase_url, supabase_key)
 
 mathpix_url = os.getenv('MATHPIX_APP_ID')
 mathpix_key = os.getenv('MATHPIX_API_KEY')
+
+def normalize_math_expression(expr):
+    """Normalize a mathematical expression for comparison"""
+    try:
+        # Remove whitespace and convert to lowercase
+        expr = ''.join(expr.lower().split())
+        
+        # Replace common variants
+        replacements = {
+            '×': '*',
+            '÷': '/',
+            '−': '-',
+            '=': '',  # Remove equals signs for comparison
+            '{': '',
+            '}': '',
+            '\\': '',  # Remove LaTeX backslashes
+        }
+        
+        for old, new in replacements.items():
+            expr = expr.replace(old, new)
+            
+        return expr
+    except Exception as e:
+        print(f"Error normalizing expression: {str(e)}")
+        return expr
+
+def validate_mathematical_expressions(user_input, correct_answer, input_type='latex'):
+    """
+    Compare two mathematical expressions for equivalence
+    """
+    try:
+        # First try basic string comparison after normalization
+        user_normalized = normalize_math_expression(user_input)
+        correct_normalized = normalize_math_expression(correct_answer)
+        
+        if user_normalized == correct_normalized:
+            return True
+            
+        # For numerical answers, try converting to float and compare
+        try:
+            user_float = float(user_normalized)
+            correct_float = float(correct_normalized)
+            return abs(user_float - correct_float) < 1e-6  # Allow small numerical differences
+        except ValueError:
+            pass
+
+        # For symbolic expressions, try using sympy
+        try:
+            if input_type == 'latex':
+                user_expr = parse_latex(user_input)
+                correct_expr = parse_latex(correct_answer)
+            else:
+                user_expr = sympy.sympify(user_normalized)
+                correct_expr = sympy.sympify(correct_normalized)
+            
+            difference = sympy.simplify(user_expr - correct_expr)
+            return difference == 0
+        except Exception as e:
+            print(f"Symbolic comparison error: {str(e)}")
+            pass
+
+        return False
+    except Exception as e:
+        print(f"Validation error: {str(e)}")
+        return False
+
 
 # Serve the frontend
 @app.route('/', defaults={'path': ''})
@@ -176,13 +244,51 @@ def get_tutor_response():
         return jsonify({'error': 'Module or part not found'}), 404
 
 
-# Process input for AI tutoring
 @app.route('/api/process', methods=['POST'])
 def process_input():
     data = request.json
     user_input = data.get('input', '')
     submission_type = data.get('submissionType', '')
-    print("Received input from frontend:", user_input)
+    context = data.get('context', None)
+
+    if submission_type == 'chat':
+        try:
+            # Build prompt with context if available
+            prompt = user_input
+            if context:
+                prompt = f"""Previous topic: {context.get('topic', '')}
+                Last question: {context.get('lastQuestion', '')}
+                Last response: {context.get('lastResponse', '')}
+                
+                Current question: {user_input}"""
+
+            # Get response from your AI processing function
+            solution = solve_problem_with_validation(prompt)
+            
+            # Try to identify the topic being discussed
+            topic = "mathematics"  # You can make this more sophisticated
+            
+            return jsonify({
+                'response': solution,
+                'topic': topic
+            })
+        except Exception as e:
+            print(f"Error in chat processing: {str(e)}")
+            return jsonify({
+                'response': 'I apologize, but I had trouble processing that question. Could you rephrase it?'
+            })
+
+    if submission_type == 'validation':
+        correct_answer = data.get('correctAnswer', '')
+        input_type = data.get('inputType', 'latex')
+        
+        print(f"Comparing - User Input: '{user_input}' with Correct Answer: '{correct_answer}'")  # Add this debug line
+        
+        # Simple direct comparison first
+        if str(user_input).strip() == str(correct_answer).strip():
+            return jsonify({'isCorrect': True})
+            
+        return jsonify({'isCorrect': False})
 
     try:
         # Store input in Supabase for record-keeping
