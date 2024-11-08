@@ -1,6 +1,6 @@
 /* dashboard.css */
 .dashboard {
-  background-color: #0F2D44; /* Same background as the header */
+  background-color: #3a3a3a; /* Same background as the header */
   padding: 20px;
   width: 100vw; 
   max-width: 100%;
@@ -10,7 +10,7 @@
 }
 
 .dashboard-user-info, .dashboard-progress {
-  background-color: #00264d; /* Same dark blue for sections */
+  background-color: #1c1c1c; /* Same dark blue for sections */
   padding: 20px;
   border-radius: 5px;
   margin-bottom: 20px;

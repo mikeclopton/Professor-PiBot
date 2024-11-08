@@ -3,9 +3,8 @@
     margin: 60px auto;
     padding: 30px; /* Increased padding for more space */
     text-align: center;
-    background-color: #0F2D44; /* A cleaner background color */
+    background-color: #3a3a3a; /* A cleaner background color */
     border-radius: 8px;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1); /* Deeper shadow for depth */
 }
 
 .module-title {
@@ -25,7 +24,7 @@
 }
 
 .module-button {
-    background-color: #007bff; /* Primary color */
+    background-color: #ffaa22; /* Primary color */
     color: white;
     border: none;
     padding: 12px 24px; /* Slightly larger padding */
@@ -37,7 +36,7 @@
 }
 
 .module-button:hover {
-    background-color: #0056b3; /* Darker on hover */
+    background-color: #754c00; /* Darker on hover */
     transform: translateY(-2px); /* Slight lift effect */
 }
 
