@@ -6,7 +6,7 @@ import Dashboard from './pages/dashboard.jsx';
 import Login from './pages/login.jsx';
 import Register from './pages/register.jsx';
 import Module from './pages/module.jsx';
-import logo from './assets/logo.jpg';
+import logo from './assets/logo.png';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 
 function App() {
