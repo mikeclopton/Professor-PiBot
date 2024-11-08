@@ -3,7 +3,7 @@ import axios from 'axios';
 import DrawingPad from './DrawingPad';
 import "//unpkg.com/mathlive";
 
-const TutorInput = ({ module, part, userId }) => {
+const TutorInput = ({ module, userId }) => {
     const [submissionType, setSubmissionType] = useState('latex');
     const [input, setInput] = useState('');
     const [questions, setQuestions] = useState([]);
@@ -19,8 +19,8 @@ const TutorInput = ({ module, part, userId }) => {
         const fetchQuestions = async () => {
             try {
                 const response = await axios.get(`http://127.0.0.1:5000/api/getmodule?module=${module}`);
-                if (response.data && response.data.modules) {
-                    setQuestions(response.data.modules[module].parts[1].questions || []);
+                if (response.data && response.data.questions) {
+                    setQuestions(response.data.questions);
                 } else {
                     setError("Error fetching module questions.");
                 }
@@ -33,6 +33,7 @@ const TutorInput = ({ module, part, userId }) => {
         };
         fetchQuestions();
     }, [module]);
+
 
     useEffect(() => {
         const fetchAIResponse = async () => {
