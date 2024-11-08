@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom'; 
-import './register.css';
+import { Link, useNavigate } from 'react-router-dom';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 
 function Register() {
@@ -8,10 +7,14 @@ function Register() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
+    const [errorMessage, setErrorMessage] = useState('');
+    const navigate = useNavigate();
 
-    const handleRegister = async () => {
+    const handleRegister = async (e) => {
+        e.preventDefault();
+
         if (password !== confirmPassword) {
-            alert("Passwords do not match");
+            setErrorMessage("Passwords do not match");
             return;
         }
 
@@ -21,53 +24,87 @@ function Register() {
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({
-                    username,
-                    email,
-                    password
-                })
+                body: JSON.stringify({ username, email, password })
             });
 
             const data = await response.json();
+
             if (response.ok) {
                 alert('Registration successful');
-                // Redirect to login or another page if needed
+                navigate('/login');
             } else {
-                alert(data.error || 'Registration failed');
+                setErrorMessage(data.error || 'Registration failed');
             }
         } catch (error) {
             console.error('Error during registration:', error);
-            alert('An error occurred during registration');
+            setErrorMessage('An error occurred during registration');
         }
     };
 
     return (
-        <div className="container">
-            <div className="register">
-                <h2 className="register-header">
-                    <i className="fas fa-user-plus"></i> Create Your Account
-                </h2>
-                <div className="register-input">
-                    <div className="input-group">
-                        <i className="fas fa-user"></i>
-                        <input type="text" placeholder="Username" value={username} onChange={(e) => setUsername(e.target.value)} />
+        <div className="relative py-3 sm:max-w-xl sm:mx-auto w-full">
+            <div className="relative px-4 py-10 bg-black mx-8 md:mx-0 shadow rounded-3xl sm:p-10">
+                <div className="max-w-md mx-auto text-white">
+                    <h2 className="text-2xl font-bold text-center text-white mb-6">
+                        Get Started Today!
+                    </h2>
+
+                    <div className="mt-5">
+                        {errorMessage && <p className="text-red-500 text-sm">{errorMessage}</p>}
+                        <form onSubmit={handleRegister}>
+                            <label htmlFor="username" className="font-semibold text-sm text-gray-400 pb-1 block">Username</label>
+                            <input
+                                id="username"
+                                type="text"
+                                className="border rounded-lg px-3 py-2 mt-1 mb-5 text-sm w-full bg-gray-700 text-white focus:border-blue-500 focus:ring-4 focus:ring-blue-500"
+                                placeholder="Username"
+                                value={username}
+                                onChange={(e) => setUsername(e.target.value)}
+                                required
+                            />
+                            <label htmlFor="email" className="font-semibold text-sm text-gray-400 pb-1 block">Email</label>
+                            <input
+                                id="email"
+                                type="email"
+                                className="border rounded-lg px-3 py-2 mt-1 mb-5 text-sm w-full bg-gray-700 text-white focus:border-blue-500 focus:ring-4 focus:ring-blue-500"
+                                placeholder="Email"
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                                required
+                            />
+                            <label htmlFor="password" className="font-semibold text-sm text-gray-400 pb-1 block">Password</label>
+                            <input
+                                id="password"
+                                type="password"
+                                className="border rounded-lg px-3 py-2 mt-1 mb-5 text-sm w-full bg-gray-700 text-white focus:border-blue-500 focus:ring-4 focus:ring-blue-500"
+                                placeholder="Password"
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                                required
+                            />
+                            <label htmlFor="confirmPassword" className="font-semibold text-sm text-gray-400 pb-1 block">Confirm Password</label>
+                            <input
+                                id="confirmPassword"
+                                type="password"
+                                className="border rounded-lg px-3 py-2 mt-1 mb-5 text-sm w-full bg-gray-700 text-white focus:border-blue-500 focus:ring-4 focus:ring-blue-500"
+                                placeholder="Confirm Password"
+                                value={confirmPassword}
+                                onChange={(e) => setConfirmPassword(e.target.value)}
+                                required
+                            />
+                            <div className="flex justify-center items-center">
+                                <button
+                                    type="submit"
+                                    className="flex items-center justify-center py-2 px-20 bg-white hover:bg-gray-200 focus:ring-blue-500 focus:ring-offset-blue-200 text-gray-700 w-full transition ease-in duration-200 text-center text-base font-semibold shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 rounded-lg"
+                                >
+                                    <i className="fas fa-user-plus mr-2"></i> Register
+                                </button>
+                            </div>
+                            <p className="text-center text-gray-400 text-sm mt-4">
+                                Already have an account? <Link to="/login" className="text-blue-500">Login here</Link>
+                            </p>
+                        </form>
                     </div>
-                    <div className="input-group">
-                        <i className="fas fa-envelope"></i>
-                        <input type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} />
-                    </div>
-                    <div className="input-group">
-                        <i className="fas fa-lock"></i>
-                        <input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} />
-                    </div>
-                    <div className="input-group">
-                        <i className="fas fa-lock"></i>
-                        <input type="password" placeholder="Confirm Password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} />
-                    </div>
-                    <button onClick={handleRegister}>Register</button>
-                    <p className="link">
-                        Already have an account? <Link to="/login">Login here</Link>
-                    </p>
                 </div>
             </div>
         </div>

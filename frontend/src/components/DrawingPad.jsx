@@ -63,7 +63,7 @@ const DrawingPad = ({ setResponse, setLatexPreview, onInputChange }) => {
                 ref={canvasRef}
                 width={400}
                 height={400}
-                style={{ border: '1px solid #000000' }}
+                style={{ border: '1px solid #000000', backgroundColor: 'white' }}
                 onMouseDown={startDrawing}
                 onMouseMove={draw}
                 onMouseUp={stopDrawing}
