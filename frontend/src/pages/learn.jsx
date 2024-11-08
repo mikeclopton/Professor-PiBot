@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { MathJaxContext } from 'better-react-mathjax';
-import './learn.css';
 import TutorInput from '../components/tutorinput';
 import Output from '../components/output';
 import Chat from '../components/Chat';
@@ -42,12 +41,14 @@ function Learn() {
 
   return (
     <MathJaxContext>
-      <div className="learn">
-        <div className="learn-input">
-          <h2>
+      <div className="grid grid-cols-2 gap-5 w-screen h-[80vh] p-5 text-white">
+        
+        {/* TutorInput Section */}
+        <div className="bg-gray-900 p-5 rounded-lg flex flex-col items-center overflow-hidden">
+          <h2 className="text-lg font-semibold mb-4">
             Tutor & Input <i className="fas fa-pencil-alt"></i>
           </h2>
-          <div className="course">
+          <div className="w-full h-[calc(100vh-200px)] overflow-y-auto">
             <TutorInput 
               setResponse={setResponse} 
               setLatexPreview={setLatexPreview} 
@@ -57,15 +58,14 @@ function Learn() {
             />
           </div>
         </div>
-        <div className="learn-chat">
-          <h2>
+        
+        {/* Chat Section */}
+        <div className="bg-gray-900 p-5 rounded-lg flex flex-col overflow-hidden">
+          <h2 className="text-lg font-semibold mb-4">
             Chat With Tutor <i className="fas fa-eye"></i>
           </h2>
-          <div className="chat">
-            <Chat 
-              response={response} 
-              latexPreview={latexPreview}
-            />
+          <div className="flex-1 h-[calc(100vh-200px)] overflow-y-auto">
+            <Chat response={response} latexPreview={latexPreview} />
           </div>
         </div>
       </div>

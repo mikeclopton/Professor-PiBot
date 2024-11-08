@@ -3,7 +3,7 @@ import axios from 'axios';
 import DrawingPad from './DrawingPad';
 import "//unpkg.com/mathlive";
 
-const TutorInput = ({ module, part, userId }) => {
+const TutorInput = ({ module, userId }) => {
     const [submissionType, setSubmissionType] = useState('latex');
     const [input, setInput] = useState('');
     const [questions, setQuestions] = useState([]);
@@ -19,8 +19,8 @@ const TutorInput = ({ module, part, userId }) => {
         const fetchQuestions = async () => {
             try {
                 const response = await axios.get(`http://127.0.0.1:5000/api/getmodule?module=${module}`);
-                if (response.data && response.data.modules) {
-                    setQuestions(response.data.modules[module].parts[1].questions || []);
+                if (response.data && response.data.questions) {
+                    setQuestions(response.data.questions);
                 } else {
                     setError("Error fetching module questions.");
                 }
@@ -55,7 +55,7 @@ const TutorInput = ({ module, part, userId }) => {
 
     const calculateProgress = (questionIndex) => {
         if (questions.length > 0) {
-            const newProgress = (questionIndex + 1) / questions.length;
+            const newProgress = ((questionIndex + 1) / questions.length) * 100;
             setProgress(newProgress);
         }
     };
@@ -65,7 +65,7 @@ const TutorInput = ({ module, part, userId }) => {
             const data = {
                 user_id: userId,
                 module_id: module,
-                progress: progress
+                progress: progress / 100 // Send progress as a decimal (0.14 for 14%)
             };
             const res = await axios.post('/api/update-progress', data);
             if (res.status === 200) {
@@ -102,8 +102,7 @@ const TutorInput = ({ module, part, userId }) => {
     };
 
     const handleInputChange = (event) => {
-        const newInput = event.target.value;
-        setInput(newInput);
+        setInput(event.target.value);
     };
 
     const handleDrawingInput = (drawingData) => {
@@ -134,7 +133,6 @@ const TutorInput = ({ module, part, userId }) => {
 
         let processedInput = input;
 
-        // Handle photo input
         if (submissionType === 'photo' && image) {
             try {
                 const photoResponse = await axios.post('http://127.0.0.1:5000/api/process-drawing', {
@@ -151,7 +149,6 @@ const TutorInput = ({ module, part, userId }) => {
         }
 
         try {
-            // Send input for validation
             const validationResponse = await axios.post('http://127.0.0.1:5000/api/process', {
                 input: processedInput,
                 correctAnswer: currentQuestionData.answer,
@@ -175,77 +172,112 @@ const TutorInput = ({ module, part, userId }) => {
         }
     };
 
-    if (loading) return <div>Loading questions...</div>;
-    if (error) return <div>{error}</div>;
+    if (loading) return <div className="text-center text-gray-600">Loading questions...</div>;
+    if (error) return <div className="text-center text-red-500">{error}</div>;
 
     return (
-        <div className="tutor-input-container">
-            <h2>{questions[currentQuestionIndex]?.question || 'Loading...'}</h2>
-    
-            <p>{response}</p>
-            <form onSubmit={handleSubmit}>
-                <div>
-                    <label>
+        <div className="p-6 bg-gray-100 rounded-lg shadow-md">
+            <h2 className="text-xl font-semibold text-gray-800 mb-4">{questions[currentQuestionIndex]?.question || 'Loading...'}</h2>
+
+            <p className="text-gray-600 mb-4">{response}</p>
+
+            <form onSubmit={handleSubmit} className="space-y-4">
+                <div className="flex space-x-4">
+                    <label className="flex items-center space-x-2">
                         <input
                             type="radio"
                             value="latex"
                             checked={submissionType === 'latex'}
                             onChange={handleTypeChange}
+                            className="form-radio text-blue-600"
                         />
-                        LaTeX
+                        <span className="text-gray-700">LaTeX</span>
                     </label>
-                    <label>
+                    <label className="flex items-center space-x-2">
                         <input
                             type="radio"
                             value="photo"
                             checked={submissionType === 'photo'}
                             onChange={handleTypeChange}
+                            className="form-radio text-blue-600"
                         />
-                        Photo
+                        <span className="text-gray-700">Photo</span>
                     </label>
-                    <label>
+                    <label className="flex items-center space-x-2">
                         <input
                             type="radio"
                             value="pen"
                             checked={submissionType === 'pen'}
                             onChange={handleTypeChange}
+                            className="form-radio text-blue-600"
                         />
-                        Pen
+                        <span className="text-gray-700">Pen</span>
                     </label>
                 </div>
-    
+
                 {submissionType === 'latex' && (
                     <math-field
-                    value={input}
-                    onInput={(evt) => {
-                        console.log('Math input:', evt.target.value); // Debug log
-                        setInput(evt.target.value);
-                    }}
-                    placeholder="Enter Answer here:"
+                        value={input}
+                        onInput={(evt) => setInput(evt.target.value)}
+                        placeholder="Enter Answer here:"
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                 )}
-    
+
                 {submissionType === 'photo' && (
-                    <input type="file" accept="image/*" onChange={handleImageChange} />
+                    <input
+                        type="file"
+                        accept="image/*"
+                        onChange={handleImageChange}
+                        className="block w-full text-gray-600"
+                    />
                 )}
-    
-    {submissionType === 'pen' && (
-    <DrawingPad 
-        setResponse={setResponseState}
-        setLatexPreview={setInput}
-        onInputChange={(drawingOutput) => {
-            console.log('Setting input value:', drawingOutput);
-            setInput(drawingOutput);
-        }}
-    />
-)}
-    
-                <button type="submit">Submit</button>
+
+                {submissionType === 'pen' && (
+                    <DrawingPad
+                        setResponse={setResponseState}
+                        setLatexPreview={setInput}
+                        onInputChange={(drawingOutput) => {
+                            console.log('Setting input value:', drawingOutput);
+                            setInput(drawingOutput);
+                        }}
+                    />
+                )}
+
+                <button
+                    type="submit"
+                    className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 font-semibold"
+                >
+                    Submit
+                </button>
             </form>
-    
-            <div className="navigation-buttons">
-                <button onClick={prevQuestion} disabled={currentQuestionIndex === 0}>Previous</button>
-                <button onClick={nextQuestion} disabled={currentQuestionIndex === questions.length - 1}>Next</button>
+
+            <div className="flex justify-between mt-4">
+                <button
+                    onClick={prevQuestion}
+                    disabled={currentQuestionIndex === 0}
+                    className={`py-2 px-4 rounded-lg ${currentQuestionIndex === 0 ? 'bg-gray-300' : 'bg-blue-500 text-white hover:bg-blue-600'}`}
+                >
+                    Previous
+                </button>
+                <button
+                    onClick={nextQuestion}
+                    disabled={currentQuestionIndex === questions.length - 1}
+                    className={`py-2 px-4 rounded-lg ${currentQuestionIndex === questions.length - 1 ? 'bg-gray-300' : 'bg-blue-500 text-white hover:bg-blue-600'}`}
+                >
+                    Next
+                </button>
+            </div>
+            <div className="progress-section mt-6">
+                <p className="text-gray-700 font-semibold mb-2">Module Progress</p>
+                <div className="w-full h-4 bg-gray-200 rounded-full overflow-hidden">
+                    <div
+                        className="h-full bg-green-500 text-white text-xs font-medium flex items-center justify-center"
+                        style={{ width: `${progress}%` }}
+                    >
+                        {Math.round(progress)}%
+                    </div>
+                </div>
             </div>
         </div>
     );

@@ -6,7 +6,8 @@ import Dashboard from './pages/dashboard.jsx';
 import Login from './pages/login.jsx';
 import Register from './pages/register.jsx';
 import Module from './pages/module.jsx';
-import logo from './assets/logo.jpg';
+import logo from './assets/logo.png';
+import Home from './pages/home.jsx';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 
 function App() {
@@ -49,6 +50,10 @@ function App() {
 
   const element = useRoutes([
     { 
+      path: '/',
+      element: <Home />
+    },
+    { 
       path: '/learn',
       element: <Learn />
     },
@@ -73,38 +78,40 @@ function App() {
   return (
     <div className="App">
       <header className="App-header">
-        <img src={logo} alt="DiscreteTutor Logo" className="logo" />
+        <Link to="/">
+          <img src={logo} alt="DiscreteTutor Logo" className="logo" />
+        </Link>
         <div className="nav">
           <Link to="/learn">
-            <button className="HeaderButton">
+            <button className="HeaderButton cursor-pointer transition-all bg-blue-500 text-white px-6 py-2 rounded-lg border-blue-600 border-b-[4px] hover:brightness-110 hover:-translate-y-[1px] hover:border-b-[6px] active:border-b-[2px] active:brightness-90 active:translate-y-[2px]">
               <i className="fas fa-book-open"></i> Learn
             </button>
           </Link>
           <Link to="/dashboard">
-            <button className="HeaderButton">
+            <button className="HeaderButton cursor-pointer transition-all bg-blue-500 text-white px-6 py-2 rounded-lg border-blue-600 border-b-[4px] hover:brightness-110 hover:-translate-y-[1px] hover:border-b-[6px] active:border-b-[2px] active:brightness-90 active:translate-y-[2px]">
               <i className="fas fa-tachometer-alt"></i> Dashboard
             </button>
           </Link>
           <Link to="/modules">
-            <button className="HeaderButton">
+            <button className="HeaderButton cursor-pointer transition-all bg-blue-500 text-white px-6 py-2 rounded-lg border-blue-600 border-b-[4px] hover:brightness-110 hover:-translate-y-[1px] hover:border-b-[6px] active:border-b-[2px] active:brightness-90 active:translate-y-[2px]">
               <i className="fas fa-th-list"></i> Modules
             </button>
           </Link>
           {!isLoggedIn ? (
             <>  
               <Link to="/login">
-                <button className="HeaderButton">
+                <button className="HeaderButton cursor-pointer transition-all bg-blue-500 text-white px-6 py-2 rounded-lg border-blue-600 border-b-[4px] hover:brightness-110 hover:-translate-y-[1px] hover:border-b-[6px] active:border-b-[2px] active:brightness-90 active:translate-y-[2px]">
                   <i className="fas fa-sign-in-alt"></i> Log in
                 </button>
               </Link>
               <Link to="/register">
-                <button className="HeaderButton">
+                <button className="HeaderButton cursor-pointer transition-all bg-blue-500 text-white px-6 py-2 rounded-lg border-blue-600 border-b-[4px] hover:brightness-110 hover:-translate-y-[1px] hover:border-b-[6px] active:border-b-[2px] active:brightness-90 active:translate-y-[2px]">
                   <i className="fas fa-user-plus"></i> Register
                 </button>
               </Link>
             </>
           ) : (
-            <button className="HeaderButton" onClick={handleLogout}>
+            <button className="HeaderButton cursor-pointer transition-all bg-blue-500 text-white px-6 py-2 rounded-lg border-blue-600 border-b-[4px] hover:brightness-110 hover:-translate-y-[1px] hover:border-b-[6px] active:border-b-[2px] active:brightness-90 active:translate-y-[2px]" onClick={handleLogout}>
               <i className="fas fa-sign-out-alt"></i> Log out
             </button>
           )}
