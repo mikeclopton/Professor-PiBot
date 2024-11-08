@@ -205,14 +205,25 @@ def get_module():
         # Open and load the module JSON file
         with open(module_path) as f:
             module_data = json.load(f)
-            print(f"Module data loaded: {module_data}")  # Debugging line
-            return jsonify(module_data), 200
+            questions = module_data.get("modules", {}).get(module_number, {}).get("questions", [])
+            title = module_data.get("modules", {}).get(module_number, {}).get("title", "Module")
+
+            if not questions:
+                return jsonify({'error': 'Module not found'}), 404
+            
+            # Return the module title and questions directly
+            module_info = {
+                'title': title,
+                'questions': questions
+            }
+            return jsonify(module_info), 200
     except FileNotFoundError:
         print("File not found")  # Debugging line
         return jsonify({'error': 'Module not found'}), 404
     except Exception as e:
         print(f"Error loading module: {e}")  # Debugging line
         return jsonify({'error': 'An error occurred while loading the module'}), 500
+
 
 
 @app.route('/api/get_tutor_response', methods=['GET'])

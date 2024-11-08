@@ -3,7 +3,7 @@ import axios from 'axios';
 import DrawingPad from './DrawingPad';
 import "//unpkg.com/mathlive";
 
-const TutorInput = ({ module, part, userId }) => {
+const TutorInput = ({ module, userId }) => {
     const [submissionType, setSubmissionType] = useState('latex');
     const [input, setInput] = useState('');
     const [questions, setQuestions] = useState([]);
@@ -19,8 +19,8 @@ const TutorInput = ({ module, part, userId }) => {
         const fetchQuestions = async () => {
             try {
                 const response = await axios.get(`http://127.0.0.1:5000/api/getmodule?module=${module}`);
-                if (response.data && response.data.modules) {
-                    setQuestions(response.data.modules[module].parts[1].questions || []);
+                if (response.data && response.data.questions) {
+                    setQuestions(response.data.questions);
                 } else {
                     setError("Error fetching module questions.");
                 }
@@ -55,7 +55,7 @@ const TutorInput = ({ module, part, userId }) => {
 
     const calculateProgress = (questionIndex) => {
         if (questions.length > 0) {
-            const newProgress = (questionIndex + 1) / questions.length;
+            const newProgress = ((questionIndex + 1) / questions.length) * 100;
             setProgress(newProgress);
         }
     };
@@ -65,7 +65,7 @@ const TutorInput = ({ module, part, userId }) => {
             const data = {
                 user_id: userId,
                 module_id: module,
-                progress: progress
+                progress: progress / 100 // Send progress as a decimal (0.14 for 14%)
             };
             const res = await axios.post('/api/update-progress', data);
             if (res.status === 200) {
@@ -237,7 +237,10 @@ const TutorInput = ({ module, part, userId }) => {
                     <DrawingPad
                         setResponse={setResponseState}
                         setLatexPreview={setInput}
-                        onInputChange={handleDrawingInput}
+                        onInputChange={(drawingOutput) => {
+                            console.log('Setting input value:', drawingOutput);
+                            setInput(drawingOutput);
+                        }}
                     />
                 )}
 
@@ -264,6 +267,17 @@ const TutorInput = ({ module, part, userId }) => {
                 >
                     Next
                 </button>
+            </div>
+            <div className="progress-section mt-6">
+                <p className="text-gray-700 font-semibold mb-2">Module Progress</p>
+                <div className="w-full h-4 bg-gray-200 rounded-full overflow-hidden">
+                    <div
+                        className="h-full bg-green-500 text-white text-xs font-medium flex items-center justify-center"
+                        style={{ width: `${progress}%` }}
+                    >
+                        {Math.round(progress)}%
+                    </div>
+                </div>
             </div>
         </div>
     );
