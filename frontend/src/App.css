@@ -3,7 +3,7 @@ body, html {
   margin: 0;
   padding: 0;
 
-  background-color: #003366; /* Dark blue background for the entire page */
+  background-color: #3a3a3a; /* Dark blue background for the entire page */
   color: rgb(0, 0, 0);
   height: 100%;
   display: flex;
@@ -20,7 +20,7 @@ body, html {
 }
 
 .App-header {
-  background-color: #0F2D44; 
+  background-color: #1c1c1c; 
   padding: 10px 20px;
   width: 100%; 
   max-width: 100%; 
@@ -40,7 +40,7 @@ body, html {
 }
 
 .HeaderButton, .nav-link {
-  background-color: #002a57; /* Blue color for buttons */
+  background-color: #ffb339; /* Blue color for buttons */
   border: none;
   padding: 10px 15px;
   color: white;
@@ -54,7 +54,7 @@ body, html {
 }
 
 .HeaderButton:hover, .nav-link:hover {
-  background-color: #004494; /* Darker blue for hover effect */
+  background-color: #754c00; /* Darker blue for hover effect */
 }
 
 
