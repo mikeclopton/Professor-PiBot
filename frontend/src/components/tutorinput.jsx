@@ -34,7 +34,6 @@ const TutorInput = ({ module, userId }) => {
         fetchQuestions();
     }, [module]);
 
-
     useEffect(() => {
         const fetchAIResponse = async () => {
             if (questions.length > 0) {
@@ -56,7 +55,7 @@ const TutorInput = ({ module, userId }) => {
 
     const calculateProgress = (questionIndex) => {
         if (questions.length > 0) {
-            const newProgress = (questionIndex + 1) / questions.length;
+            const newProgress = ((questionIndex + 1) / questions.length) * 100;
             setProgress(newProgress);
         }
     };
@@ -66,7 +65,7 @@ const TutorInput = ({ module, userId }) => {
             const data = {
                 user_id: userId,
                 module_id: module,
-                progress: progress
+                progress: progress / 100 // Send progress as a decimal (0.14 for 14%)
             };
             const res = await axios.post('/api/update-progress', data);
             if (res.status === 200) {
@@ -230,16 +229,16 @@ const TutorInput = ({ module, userId }) => {
                     <input type="file" accept="image/*" onChange={handleImageChange} />
                 )}
     
-    {submissionType === 'pen' && (
-    <DrawingPad 
-        setResponse={setResponseState}
-        setLatexPreview={setInput}
-        onInputChange={(drawingOutput) => {
-            console.log('Setting input value:', drawingOutput);
-            setInput(drawingOutput);
-        }}
-    />
-)}
+                {submissionType === 'pen' && (
+                    <DrawingPad 
+                        setResponse={setResponseState}
+                        setLatexPreview={setInput}
+                        onInputChange={(drawingOutput) => {
+                            console.log('Setting input value:', drawingOutput);
+                            setInput(drawingOutput);
+                        }}
+                    />
+                )}
     
                 <button type="submit">Submit</button>
             </form>
@@ -247,6 +246,19 @@ const TutorInput = ({ module, userId }) => {
             <div className="navigation-buttons">
                 <button onClick={prevQuestion} disabled={currentQuestionIndex === 0}>Previous</button>
                 <button onClick={nextQuestion} disabled={currentQuestionIndex === questions.length - 1}>Next</button>
+            </div>
+
+            {/* Module Progress Section */}
+            <div className="progress-section">
+                <p>Module Progress</p>
+                <div className="progress-bar-container">
+                    <div
+                        className="progress-bar"
+                        style={{ width: `${progress}%`, backgroundColor: '#4CAF50', color: '#fff', textAlign: 'center' }}
+                    >
+                        {Math.round(progress)}%
+                    </div>
+                </div>
             </div>
         </div>
     );
