@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import DrawingPad from './DrawingPad';
-import "//unpkg.com/mathlive";
+import "https://unpkg.com/mathlive";
 
 const TutorInput = ({ module, userId }) => {
     const [submissionType, setSubmissionType] = useState('latex');
@@ -65,7 +65,7 @@ const TutorInput = ({ module, userId }) => {
             const data = {
                 user_id: userId,
                 module_id: module,
-                progress: progress / 100 // Send progress as a decimal (0.14 for 14%)
+                progress: progress / 100
             };
             const res = await axios.post('/api/update-progress', data);
             if (res.status === 200) {
@@ -176,43 +176,24 @@ const TutorInput = ({ module, userId }) => {
     if (error) return <div className="text-center text-red-500">{error}</div>;
 
     return (
-        <div className="p-6 bg-gray-100 rounded-lg shadow-md">
-            <h2 className="text-xl font-semibold text-gray-800 mb-4">{questions[currentQuestionIndex]?.question || 'Loading...'}</h2>
-
+        <div className="p-6 bg-gray-100 rounded-lg shadow-lg">
+            <h2 className="text-2xl font-semibold text-gray-800 mb-4">{questions[currentQuestionIndex]?.question || 'Loading...'}</h2>
             <p className="text-gray-600 mb-4">{response}</p>
 
             <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="flex space-x-4">
-                    <label className="flex items-center space-x-2">
-                        <input
-                            type="radio"
-                            value="latex"
-                            checked={submissionType === 'latex'}
-                            onChange={handleTypeChange}
-                            className="form-radio text-blue-600"
-                        />
-                        <span className="text-gray-700">LaTeX</span>
-                    </label>
-                    <label className="flex items-center space-x-2">
-                        <input
-                            type="radio"
-                            value="photo"
-                            checked={submissionType === 'photo'}
-                            onChange={handleTypeChange}
-                            className="form-radio text-blue-600"
-                        />
-                        <span className="text-gray-700">Photo</span>
-                    </label>
-                    <label className="flex items-center space-x-2">
-                        <input
-                            type="radio"
-                            value="pen"
-                            checked={submissionType === 'pen'}
-                            onChange={handleTypeChange}
-                            className="form-radio text-blue-600"
-                        />
-                        <span className="text-gray-700">Pen</span>
-                    </label>
+                    {['latex', 'photo', 'pen'].map(type => (
+                        <label key={type} className="flex items-center space-x-2">
+                            <input
+                                type="radio"
+                                value={type}
+                                checked={submissionType === type}
+                                onChange={handleTypeChange}
+                                className="form-radio text-blue-600"
+                            />
+                            <span className="text-gray-700 capitalize">{type}</span>
+                        </label>
+                    ))}
                 </div>
 
                 {submissionType === 'latex' && (
@@ -223,7 +204,6 @@ const TutorInput = ({ module, userId }) => {
                         className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                 )}
-
                 {submissionType === 'photo' && (
                     <input
                         type="file"
@@ -232,7 +212,6 @@ const TutorInput = ({ module, userId }) => {
                         className="block w-full text-gray-600"
                     />
                 )}
-
                 {submissionType === 'pen' && (
                     <DrawingPad
                         setResponse={setResponseState}
@@ -268,6 +247,7 @@ const TutorInput = ({ module, userId }) => {
                     Next
                 </button>
             </div>
+
             <div className="progress-section mt-6">
                 <p className="text-gray-700 font-semibold mb-2">Module Progress</p>
                 <div className="w-full h-4 bg-gray-200 rounded-full overflow-hidden">
