@@ -1,13 +1,23 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 
 export default function Home() {
+  const navigate = useNavigate();
+
+  const handleGetStarted = () => {
+    navigate("/modules"); // Navigates to the modules page
+  };
+
   return (
     <div className="flex flex-col items-center bg-gray-900 min-h-screen">
       {/* Hero Section */}
       <section className="w-full bg-gray-800 text-white py-16 px-6 text-center">
         <h1 className="text-4xl font-bold mb-4">Welcome to the Discrete Math AI Tutor</h1>
         <p className="text-lg mb-6">Your personal AI tutor for mastering discrete mathematics.</p>
-        <button className="bg-blue-600 hover:bg-blue-700 px-8 py-3 rounded-lg font-semibold">
+        <button
+          onClick={handleGetStarted}
+          className="bg-blue-600 hover:bg-blue-700 px-8 py-3 rounded-lg font-semibold"
+        >
           Get Started
         </button>
       </section>
