@@ -58,28 +58,34 @@ const DrawingPad = ({ setResponse, setLatexPreview, onInputChange }) => {
     };
 
     return (
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '10px' }}>
+        <div className="flex flex-col items-center gap-4">
             <canvas
                 ref={canvasRef}
                 width={400}
                 height={400}
-                style={{ border: '1px solid #000000', backgroundColor: 'white' }}
+                className="border border-gray-700 bg-white"
                 onMouseDown={startDrawing}
                 onMouseMove={draw}
                 onMouseUp={stopDrawing}
                 onMouseOut={stopDrawing}
             />
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                <button type="button" onClick={clearCanvas}>Clear Drawing</button>
-                <button type="button" onClick={previewDrawing}>Preview</button>
+            <div className="flex items-center gap-4">
+                <button
+                    type="button"
+                    onClick={clearCanvas}
+                    className="px-4 py-2 rounded-lg bg-red-500 text-white hover:bg-red-600"
+                >
+                    Clear Drawing
+                </button>
+                <button
+                    type="button"
+                    onClick={previewDrawing}
+                    className="px-4 py-2 rounded-lg bg-green-500 text-white hover:bg-green-600"
+                >
+                    Preview
+                </button>
                 {preview && (
-                    <div style={{ 
-                        padding: '8px', 
-                        border: '1px solid #ccc', 
-                        borderRadius: '4px', 
-                        backgroundColor: '#f5f5f5',
-                        marginLeft: '10px'
-                    }}>
+                    <div className="px-4 py-2 border border-gray-300 rounded-lg bg-blue-100 text-blue-700">
                         <span>Detected: {preview}</span>
                     </div>
                 )}

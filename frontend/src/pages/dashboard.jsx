@@ -1,19 +1,17 @@
-// Dashboard.jsx
 import React, { useEffect, useState } from 'react';
-import './dashboard.css';
-import '@fortawesome/fontawesome-free/css/all.min.css'; // Ensure Font Awesome is imported
-import EditInfoForm from '../components/EditInfoForm'; // Import the EditInfoForm component
+import '@fortawesome/fontawesome-free/css/all.min.css';
+import EditInfoForm from '../components/EditInfoForm';
 
 function Dashboard() {
     const [userInfo, setUserInfo] = useState(null);
-    const [progress, setProgress] = useState(null); // Initially null to differentiate from empty progress data
-    const [isEditing, setIsEditing] = useState(false); // State to manage edit form visibility
-    const [isLoading, setIsLoading] = useState(true); // Loading state to manage API fetch
+    const [progress, setProgress] = useState(null);
+    const [isEditing, setIsEditing] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
         const fetchUserData = async () => {
             try {
-                setIsLoading(true); // Start loading
+                setIsLoading(true);
                 const response = await fetch('http://127.0.0.1:5000/api/user', {
                     method: 'GET',
                     headers: {
@@ -27,11 +25,11 @@ function Dashboard() {
 
                 const data = await response.json();
                 setUserInfo(data.user);
-                setProgress(data.progress || []); // Set an empty array if no progress data
+                setProgress(data.progress || []);
             } catch (error) {
                 console.error('Error fetching user data:', error);
             } finally {
-                setIsLoading(false); // Stop loading
+                setIsLoading(false);
             }
         };
 
@@ -43,25 +41,38 @@ function Dashboard() {
             ...prevUserInfo,
             ...updatedInfo,
         }));
-        setIsEditing(false); // Close the edit form after saving changes
+        setIsEditing(false);
     };
 
     if (isLoading) {
-        return <div className="dashboard"><p>Loading user data...</p></div>;
+        return <div className="w-full p-8 text-center text-white">Loading user data...</div>;
     }
 
     return (
-        <div className="dashboard">
-            <div className="dashboard-user-info">
-                <h3><i className="fas fa-user"></i> Your Information</h3>
+        <div className="max-w-4xl mx-auto my-8 p-6 bg-gray-900 rounded-lg shadow-lg space-y-6">
+            {/* User Information Section */}
+            <div className="bg-gray-800 p-6 rounded-lg shadow-md">
+                <h3 className="text-2xl font-semibold text-white mb-4 flex items-center">
+                    <i className="fas fa-user mr-2"></i>
+                    Your Information
+                </h3>
                 {userInfo ? (
-                    <div className="info-placeholder">
+                    <div>
                         {!isEditing ? (
                             <>
-                                <p><i className="fas fa-user-circle"></i> Name: {userInfo.username}</p>
-                                <p><i className="fas fa-envelope"></i> Email: {userInfo.email}</p>
-                                <button onClick={() => setIsEditing(true)}>
-                                    <i className="fas fa-edit"></i> Edit Info
+                                <p className="text-gray-300 mb-2">
+                                    <i className="fas fa-user-circle mr-2"></i> 
+                                    <span className="font-medium">Name:</span> {userInfo.username}
+                                </p>
+                                <p className="text-gray-300 mb-4">
+                                    <i className="fas fa-envelope mr-2"></i> 
+                                    <span className="font-medium">Email:</span> {userInfo.email}
+                                </p>
+                                <button
+                                    onClick={() => setIsEditing(true)}
+                                    className="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-300 shadow"
+                                >
+                                    <i className="fas fa-edit mr-2"></i>Edit Info
                                 </button>
                             </>
                         ) : (
@@ -69,21 +80,31 @@ function Dashboard() {
                         )}
                     </div>
                 ) : (
-                    <p>Error loading user information. Please try again.</p>
+                    <p className="text-red-400">
+                        Error loading user information. Unfortunately, we were unable to retrieve the necessary data for your profile at this time. Please check your network connection and try refreshing the page. If the issue persists, contact our support team for further assistance.
+                    </p>
                 )}
             </div>
-            <div className="dashboard-progress">
-                <h3><i className="fas fa-chart-line"></i> Your Progress</h3>
+
+            {/* Progress Section */}
+            <div className="bg-gray-800 p-6 rounded-lg shadow-md">
+                <h3 className="text-2xl font-semibold text-white mb-4 flex items-center">
+                    <i className="fas fa-chart-line mr-2"></i>
+                    Your Progress
+                </h3>
                 {progress && progress.length > 0 ? (
-                    <div className="progress-placeholder">
+                    <div className="space-y-2">
                         {progress.map((moduleProgress, index) => (
-                            <p key={index}>
-                                <i className="fas fa-book-open"></i> {moduleProgress.module_name}: {moduleProgress.completion_percentage}% Complete
+                            <p key={index} className="text-gray-300">
+                                <i className="fas fa-book-open mr-2"></i> 
+                                {moduleProgress.module_name}: {moduleProgress.completion_percentage}% Complete
                             </p>
                         ))}
                     </div>
                 ) : (
-                    <p>No progress data available.</p>
+                    <p className="text-gray-400">
+                        No progress data is available at this time. Start completing modules to track your progress here. Your progress will automatically be saved and displayed as you work through each module, providing a clear overview of your achievements and learning journey.
+                    </p>
                 )}
             </div>
         </div>
