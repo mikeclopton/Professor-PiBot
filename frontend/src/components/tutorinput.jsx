@@ -14,50 +14,40 @@ const TutorInput = ({ module, userId }) => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [image, setImage] = useState(null);
+    const [answeredQuestions, setAnsweredQuestions] = useState([]); // Track which questions are correctly answered
 
     useEffect(() => {
         const fetchQuestions = async () => {
+            setLoading(true); // Set loading to true at the start of fetching
             try {
                 const response = await axios.get(`http://127.0.0.1:5000/api/getmodule?module=${module}`);
+                
                 if (response.data && response.data.questions) {
+                    // Only update questions if the module data matches the requested module
                     setQuestions(response.data.questions);
+                    setAnsweredQuestions(Array(response.data.questions.length).fill(false)); // Initialize answers
+                    setError(null); // Reset any previous error
                 } else {
-                    setError("Error fetching module questions.");
+                    setError("Error: Module not found or questions are missing.");
                 }
             } catch (err) {
                 console.error('Error fetching questions:', err);
                 setError('Failed to fetch questions.');
             } finally {
-                setLoading(false);
+                setLoading(false); // End loading state
             }
         };
+    
+        // Clear previous questions and call fetch
+        setQuestions([]); // Clear questions before fetching new ones
         fetchQuestions();
     }, [module]);
+    
 
-    useEffect(() => {
-        const fetchAIResponse = async () => {
-            if (questions.length > 0) {
-                const currentQuestion = questions[currentQuestionIndex].question;
-                try {
-                    const response = await axios.post('http://127.0.0.1:5000/api/process', {
-                        input: currentQuestion,
-                        submissionType: 'tutor',
-                    });
-                    setAiResponse(response.data.response);
-                } catch (err) {
-                    console.error('Failed to fetch AI response:', err);
-                    setAiResponse('Unable to get response from AI.');
-                }
-            }
-        };
-        fetchAIResponse();
-    }, [currentQuestionIndex, questions]);
-
-    const calculateProgress = (questionIndex) => {
-        if (questions.length > 0) {
-            const newProgress = ((questionIndex + 1) / questions.length) * 100;
-            setProgress(newProgress);
-        }
+    const calculateProgress = () => {
+        const correctAnswersCount = answeredQuestions.filter(Boolean).length;
+        const newProgress = (correctAnswersCount / questions.length) * 100;
+        setProgress(newProgress);
     };
 
     const updateProgressInBackend = async () => {
@@ -75,46 +65,6 @@ const TutorInput = ({ module, userId }) => {
             }
         } catch (error) {
             console.error("Error updating progress:", error);
-        }
-    };
-
-    const nextQuestion = () => {
-        if (currentQuestionIndex < questions.length - 1) {
-            setCurrentQuestionIndex(currentQuestionIndex + 1);
-            setInput('');
-            setResponseState('');
-            calculateProgress(currentQuestionIndex + 1);
-            updateProgressInBackend();
-        }
-    };
-
-    const prevQuestion = () => {
-        if (currentQuestionIndex > 0) {
-            setCurrentQuestionIndex(currentQuestionIndex - 1);
-            setInput('');
-            setResponseState('');
-        }
-    };
-
-    const handleTypeChange = (event) => {
-        setSubmissionType(event.target.value);
-        setInput('');
-    };
-
-    const handleInputChange = (event) => {
-        setInput(event.target.value);
-    };
-
-    const handleDrawingInput = (drawingData) => {
-        setInput(drawingData);
-    };
-
-    const handleImageChange = (event) => {
-        const file = event.target.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = () => setImage(reader.result);
-            reader.readAsDataURL(file);
         }
     };
 
@@ -158,17 +108,60 @@ const TutorInput = ({ module, userId }) => {
 
             const isCorrect = validationResponse.data.isCorrect;
             setResponseState(isCorrect 
-                ? "Correct!" 
+                ? "Correct!"
                 : `Incorrect. The correct answer is: ${currentQuestionData.answer}`
             );
 
-            if (isCorrect) {
-                calculateProgress(currentQuestionIndex);
+            if (isCorrect && !answeredQuestions[currentQuestionIndex]) {
+                // Only update progress if this question was not previously answered correctly
+                const updatedAnswers = [...answeredQuestions];
+                updatedAnswers[currentQuestionIndex] = true;
+                setAnsweredQuestions(updatedAnswers);
+
+                calculateProgress();
                 await updateProgressInBackend();
             }
         } catch (error) {
             console.error('Error validating answer:', error);
             setResponseState('Error validating your answer. Please try again.');
+        }
+    };
+
+    const nextQuestion = () => {
+        if (currentQuestionIndex < questions.length - 1) {
+            setCurrentQuestionIndex(currentQuestionIndex + 1);
+            setInput('');
+            setResponseState('');
+        }
+    };
+
+    const prevQuestion = () => {
+        if (currentQuestionIndex > 0) {
+            setCurrentQuestionIndex(currentQuestionIndex - 1);
+            setInput('');
+            setResponseState('');
+        }
+    };
+
+    const handleTypeChange = (event) => {
+        setSubmissionType(event.target.value);
+        setInput('');
+    };
+
+    const handleInputChange = (event) => {
+        setInput(event.target.value);
+    };
+
+    const handleDrawingInput = (drawingData) => {
+        setInput(drawingData);
+    };
+
+    const handleImageChange = (event) => {
+        const file = event.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = () => setImage(reader.result);
+            reader.readAsDataURL(file);
         }
     };
 
