@@ -176,10 +176,10 @@ const TutorInput = ({ module, userId }) => {
     if (error) return <div className="text-center text-red-500">{error}</div>;
 
     return (
-        <div className="p-6 bg-gray-100 rounded-lg shadow-lg">
-            <h2 className="text-2xl font-semibold text-gray-800 mb-4">{questions[currentQuestionIndex]?.question || 'Loading...'}</h2>
+        <div className="p-6 bg-gray-100 rounded-lg shadow-lg transition-all duration-300 ease-in-out" style={{ backgroundColor: '#f8fafc' }}>
+            <h2 className="text-2xl font-semibold text-gray-800 mb-4 font-sans transition-transform duration-300 ease-in-out">{questions[currentQuestionIndex]?.question || 'Loading...'}</h2>
             <p className="text-gray-600 mb-4">{response}</p>
-
+    
             <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="flex space-x-4">
                     {['latex', 'photo', 'pen'].map(type => (
@@ -195,12 +195,12 @@ const TutorInput = ({ module, userId }) => {
                         </label>
                     ))}
                 </div>
-
+    
                 {submissionType === 'latex' && (
                     <math-field
                         value={input}
                         onInput={(evt) => setInput(evt.target.value)}
-                        placeholder="Enter Answer here:"
+                        placeholder="Enter\hspace{1mm}Answer"
                         className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                 )}
@@ -222,45 +222,48 @@ const TutorInput = ({ module, userId }) => {
                         }}
                     />
                 )}
-
+    
                 <button
                     type="submit"
-                    className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 font-semibold"
+                    className="w-full py-2 rounded-lg font-semibold text-white transition-all duration-300 ease-in-out transform hover:scale-105"
+                    style={{ background: 'linear-gradient(to right, #3b82f6, #6366f1)' }}
                 >
                     Submit
                 </button>
             </form>
-
-            <div className="flex justify-between mt-4">
-                <button
-                    onClick={prevQuestion}
-                    disabled={currentQuestionIndex === 0}
-                    className={`py-2 px-4 rounded-lg ${currentQuestionIndex === 0 ? 'bg-gray-300' : 'bg-blue-500 text-white hover:bg-blue-600'}`}
-                >
-                    Previous
-                </button>
-                <button
-                    onClick={nextQuestion}
-                    disabled={currentQuestionIndex === questions.length - 1}
-                    className={`py-2 px-4 rounded-lg ${currentQuestionIndex === questions.length - 1 ? 'bg-gray-300' : 'bg-blue-500 text-white hover:bg-blue-600'}`}
-                >
-                    Next
-                </button>
-            </div>
-
+    
             <div className="progress-section mt-6">
                 <p className="text-gray-700 font-semibold mb-2">Module Progress</p>
                 <div className="w-full h-4 bg-gray-200 rounded-full overflow-hidden">
                     <div
-                        className="h-full bg-green-500 text-white text-xs font-medium flex items-center justify-center"
+                        className="h-full bg-gradient-to-r from-teal-400 to-green-500 text-white text-xs font-medium flex items-center justify-center transition-all duration-500 ease-in-out"
                         style={{ width: `${progress}%` }}
                     >
                         {Math.round(progress)}%
                     </div>
                 </div>
             </div>
+    
+            <div className="flex justify-between mt-4">
+                <button
+                    onClick={prevQuestion}
+                    disabled={currentQuestionIndex === 0}
+                    className={`py-2 px-4 rounded-lg transform transition-transform duration-300 ${currentQuestionIndex === 0 ? 'bg-gray-300' : 'bg-blue-500 text-white hover:bg-blue-600 hover:scale-105'}`}
+                >
+                    Previous
+                </button>
+                <button
+                    onClick={nextQuestion}
+                    disabled={currentQuestionIndex === questions.length - 1}
+                    className={`py-2 px-4 rounded-lg transform transition-transform duration-300 ${currentQuestionIndex === questions.length - 1 ? 'bg-gray-300' : 'bg-blue-500 text-white hover:bg-blue-600 hover:scale-105'}`}
+                >
+                    Next
+                </button>
+            </div>
         </div>
     );
+    
+    
 };
 
 export default TutorInput;
