@@ -82,6 +82,7 @@ const TutorInput = ({ module, userId }) => {
         if (currentQuestionIndex < questions.length - 1) {
             setCurrentQuestionIndex(currentQuestionIndex + 1);
             setInput('');
+            setImage(null);
             setResponseState('');
             calculateProgress(currentQuestionIndex + 1);
             updateProgressInBackend();
@@ -92,9 +93,11 @@ const TutorInput = ({ module, userId }) => {
         if (currentQuestionIndex > 0) {
             setCurrentQuestionIndex(currentQuestionIndex - 1);
             setInput('');
+            setImage(null);
             setResponseState('');
         }
     };
+
 
     const handleTypeChange = (event) => {
         setSubmissionType(event.target.value);
@@ -157,8 +160,8 @@ const TutorInput = ({ module, userId }) => {
             });
 
             const isCorrect = validationResponse.data.isCorrect;
-            setResponseState(isCorrect 
-                ? "Correct!" 
+            setResponseState(isCorrect
+                ? "Correct!"
                 : `Incorrect. The correct answer is: ${currentQuestionData.answer}`
             );
 
@@ -179,7 +182,7 @@ const TutorInput = ({ module, userId }) => {
         <div className="p-6 bg-gray-100 rounded-lg shadow-lg transition-all duration-300 ease-in-out" style={{ backgroundColor: '#f8fafc' }}>
             <h2 className="text-2xl font-semibold text-gray-800 mb-4 font-sans transition-transform duration-300 ease-in-out">{questions[currentQuestionIndex]?.question || 'Loading...'}</h2>
             <p className="text-gray-600 mb-4">{response}</p>
-    
+
             <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="flex space-x-4">
                     {['latex', 'photo', 'pen'].map(type => (
@@ -195,17 +198,19 @@ const TutorInput = ({ module, userId }) => {
                         </label>
                     ))}
                 </div>
-    
+
                 {submissionType === 'latex' && (
                     <math-field
+                        key={`latex-${currentQuestionIndex}`} // Use key to force re-render
                         value={input}
                         onInput={(evt) => setInput(evt.target.value)}
-                        placeholder="Enter\hspace{1mm}Answer"
+                        placeholder="Enter\hspace{1mm}Answer\hspace{1mm}Here"
                         className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                 )}
                 {submissionType === 'photo' && (
                     <input
+                        key={`photo-${currentQuestionIndex}`} // Use key to force re-render
                         type="file"
                         accept="image/*"
                         onChange={handleImageChange}
@@ -214,6 +219,7 @@ const TutorInput = ({ module, userId }) => {
                 )}
                 {submissionType === 'pen' && (
                     <DrawingPad
+                        key={`pen-${currentQuestionIndex}`} // Use key to force re-render
                         setResponse={setResponseState}
                         setLatexPreview={setInput}
                         onInputChange={(drawingOutput) => {
@@ -222,7 +228,7 @@ const TutorInput = ({ module, userId }) => {
                         }}
                     />
                 )}
-    
+
                 <button
                     type="submit"
                     className="w-full py-2 rounded-lg font-semibold text-white transition-all duration-300 ease-in-out transform hover:scale-105"
@@ -231,7 +237,8 @@ const TutorInput = ({ module, userId }) => {
                     Submit
                 </button>
             </form>
-    
+
+
             <div className="progress-section mt-6">
                 <p className="text-gray-700 font-semibold mb-2">Module Progress</p>
                 <div className="w-full h-4 bg-gray-200 rounded-full overflow-hidden">
@@ -243,7 +250,7 @@ const TutorInput = ({ module, userId }) => {
                     </div>
                 </div>
             </div>
-    
+
             <div className="flex justify-between mt-4">
                 <button
                     onClick={prevQuestion}
@@ -262,8 +269,8 @@ const TutorInput = ({ module, userId }) => {
             </div>
         </div>
     );
-    
-    
+
+
 };
 
 export default TutorInput;
