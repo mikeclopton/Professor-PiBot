@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { MathJax, MathJaxContext } from 'better-react-mathjax';
+import icon from '../assets/icon.png'; // Adjust the path based on your folder structure
 
 const Chat = ({ response }) => {
     const [chatMessages, setChatMessages] = useState([]);
@@ -16,12 +17,10 @@ const Chat = ({ response }) => {
             let headerText;
             let content = section.trim();
     
-            // Handle different section types
             if (content.startsWith('Step')) {
                 const stepNumber = content.match(/Step (\d+)/)[1];
                 const stepTitle = content.split('\n')[0].replace(/^Step \d+:?\s*/, '').trim();
                 headerText = `Step ${stepNumber}: ${stepTitle}`;
-                // Get content after the first line
                 content = content.split('\n').slice(1).join('\n').trim();
             } else if (content.toLowerCase().includes('encouragement')) {
                 headerText = '💡 Note';
@@ -35,21 +34,11 @@ const Chat = ({ response }) => {
             }
     
             return (
-                <div key={index} style={{ 
-                    marginBottom: '20px', 
-                    padding: '5px',
-                    display: 'block' 
-                }}>
-                    <div style={{ 
-                        fontWeight: 'bold',
-                        marginBottom: '8px'
-                    }}>
+                <div key={index} style={{ marginBottom: '20px', padding: '5px', display: 'block' }}>
+                    <div style={{ fontWeight: 'bold', marginBottom: '8px' }}>
                         {headerText}
                     </div>
-                    <div style={{ 
-                        marginLeft: '20px',
-                        whiteSpace: 'pre-line'
-                    }}>
+                    <div style={{ marginLeft: '20px', whiteSpace: 'pre-line' }}>
                         <MathJax>{content}</MathJax>
                     </div>
                 </div>
@@ -83,7 +72,6 @@ const Chat = ({ response }) => {
 
             const data = await response.json();
             
-            // Update conversation context
             setConversationContext({
                 topic: data.topic || conversationContext?.topic,
                 lastQuestion: userInput,
@@ -93,10 +81,7 @@ const Chat = ({ response }) => {
             setChatMessages(prevMessages => [...prevMessages, { sender: 'ai', text: data.response }]);
         } catch (err) {
             console.error('Failed to fetch AI response:', err);
-            setChatMessages(prevMessages => [...prevMessages, { 
-                sender: 'ai', 
-                text: 'Unable to get response from AI.' 
-            }]);
+            setChatMessages(prevMessages => [...prevMessages, { sender: 'ai', text: 'Unable to get response from AI.' }]);
         } finally {
             setLoading(false);
             setUserInput('');
@@ -105,23 +90,17 @@ const Chat = ({ response }) => {
 
     return (
         <MathJaxContext>
-            {/* Rest of your existing JSX remains exactly the same */}
             <div className="flex flex-col h-full">
                 <div className="flex-1 overflow-y-auto p-4 bg-gray-800 rounded-lg">
                     {chatMessages.map((message, index) => (
                         <div key={index} className={`flex ${message.sender === 'ai' ? 'items-start' : 'items-end justify-end'} mb-2`}>
                             {message.sender === 'ai' ? (
                                 <>
-                                    <svg
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        viewBox="0 0 100 100"
-                                        width="50"
-                                        height="50"
-                                        fill="#009688"
-                                        className="w-8 h-8 rounded-full"
-                                    >
-                                        {/* SVG Content */}
-                                    </svg>
+                                    <img
+                                        src={icon}
+                                        alt="AI Icon"
+                                        className="w-10 h-8"
+                                    />
                                     <div className="ml-3 bg-gray-100 p-3 rounded-lg">
                                         <p className="text-sm text-gray-800">{renderResponseWithLatex(message.text)}</p>
                                     </div>

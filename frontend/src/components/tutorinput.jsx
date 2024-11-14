@@ -98,7 +98,6 @@ const TutorInput = ({ module, userId }) => {
         }
     };
 
-
     const handleTypeChange = (event) => {
         setSubmissionType(event.target.value);
         setInput('');
@@ -175,78 +174,117 @@ const TutorInput = ({ module, userId }) => {
         }
     };
 
-    if (loading) return <div className="text-center text-gray-600">Loading questions...</div>;
+    if (loading) return <div className="text-center">Loading questions...</div>;
     if (error) return <div className="text-center text-red-500">{error}</div>;
 
     return (
-        <div className="p-6 bg-gray-100 rounded-lg shadow-lg transition-all duration-300 ease-in-out" style={{ backgroundColor: '#f8fafc' }}>
-            <h2 className="text-2xl font-semibold text-gray-800 mb-4 font-sans transition-transform duration-300 ease-in-out">{questions[currentQuestionIndex]?.question || 'Loading...'}</h2>
-            <p className="text-gray-600 mb-4">{response}</p>
-
-            <form onSubmit={handleSubmit} className="space-y-4">
-                <div className="flex space-x-4">
-                    {['latex', 'photo', 'pen'].map(type => (
-                        <label key={type} className="flex items-center space-x-2">
-                            <input
-                                type="radio"
-                                value={type}
-                                checked={submissionType === type}
-                                onChange={handleTypeChange}
-                                className="form-radio text-blue-600"
-                            />
-                            <span className="text-gray-700 capitalize">{type}</span>
-                        </label>
-                    ))}
-                </div>
-
-                {submissionType === 'latex' && (
-                    <math-field
-                        key={`latex-${currentQuestionIndex}`} // Use key to force re-render
-                        value={input}
-                        onInput={(evt) => setInput(evt.target.value)}
-                        placeholder="Enter\hspace{1mm}Answer\hspace{1mm}Here"
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                )}
-                {submissionType === 'photo' && (
-                    <input
-                        key={`photo-${currentQuestionIndex}`} // Use key to force re-render
-                        type="file"
-                        accept="image/*"
-                        onChange={handleImageChange}
-                        className="block w-full text-gray-600"
-                    />
-                )}
-                {submissionType === 'pen' && (
-                    <DrawingPad
-                        key={`pen-${currentQuestionIndex}`} // Use key to force re-render
-                        setResponse={setResponseState}
-                        setLatexPreview={setInput}
-                        onInputChange={(drawingOutput) => {
-                            console.log('Setting input value:', drawingOutput);
-                            setInput(drawingOutput);
-                        }}
-                    />
-                )}
-
-                <button
-                    type="submit"
-                    className="w-full py-2 rounded-lg font-semibold text-white transition-all duration-300 ease-in-out transform hover:scale-105"
-                    style={{ background: 'linear-gradient(to right, #3b82f6, #6366f1)' }}
+        <div className="p-6 bg-gray-800 text-gray-100 rounded-lg shadow-lg transition-all duration-300 ease-in-out h-full flex flex-col justify-between overflow-auto">
+            <div>
+                <h2 className="text-2xl font-semibold mb-4 font-sans transition-transform duration-300 ease-in-out">{questions[currentQuestionIndex]?.question || 'Loading...'}</h2>
+                <p
+                className={`${
+                    response.includes("Correct!") ? "text-green-500" : response.includes("Incorrect") ? "text-red-500" : "text-gray-600"
+                } mb-4`}
                 >
-                    Submit
-                </button>
-            </form>
+                {response}
+                </p>
 
 
-            <div className="progress-section mt-6">
-                <p className="text-gray-700 font-semibold mb-2">Module Progress</p>
-                <div className="w-full h-4 bg-gray-200 rounded-full overflow-hidden">
-                    <div
-                        className="h-full bg-gradient-to-r from-teal-400 to-green-500 text-white text-xs font-medium flex items-center justify-center transition-all duration-500 ease-in-out"
-                        style={{ width: `${progress}%` }}
+                <form onSubmit={handleSubmit} className="space-y-4">
+                    <div className="flex space-x-4">
+                        {['latex', 'photo', 'pen'].map(type => (
+                            <label key={type} className="flex items-center space-x-2">
+                                <input
+                                    type="radio"
+                                    value={type}
+                                    checked={submissionType === type}
+                                    onChange={handleTypeChange}
+                                    className="form-radio text-blue-600"
+                                />
+                                <span className="capitalize">{type}</span>
+                            </label>
+                        ))}
+                    </div>
+
+                    {submissionType === 'latex' && (
+                        <math-field
+                            key={`latex-${currentQuestionIndex}`}
+                            value={input}
+                            onInput={(evt) => setInput(evt.target.value)}
+                            placeholder="Enter Answer Here"
+                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        />
+                    )}
+                    {submissionType === 'photo' && (
+                        <div className="flex items-center justify-center w-full">
+                            <label
+                                htmlFor="dropzone-file"
+                                className="flex flex-col items-center justify-center w-full h-64 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-gray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600"
+                            >
+                                <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                                    <svg
+                                        className="w-8 h-8 mb-4 text-gray-500 dark:text-gray-400"
+                                        aria-hidden="true"
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        fill="none"
+                                        viewBox="0 0 20 16"
+                                    >
+                                        <path
+                                            stroke="currentColor"
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                            strokeWidth="2"
+                                            d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"
+                                        />
+                                    </svg>
+                                    <p className="mb-2 text-sm text-gray-500 dark:text-gray-400">
+                                        <span className="font-semibold">Click to upload</span> or drag and drop
+                                    </p>
+                                    <p className="text-xs text-gray-500 dark:text-gray-400">
+                                        SVG, PNG, JPG or GIF (MAX. 800x400px)
+                                    </p>
+                                </div>
+                                <input
+                                    id="dropzone-file"
+                                    type="file"
+                                    accept="image/*"
+                                    onChange={handleImageChange}
+                                    className="hidden"
+                                />
+                            </label>
+                        </div>
+                    )}
+
+                    {submissionType === 'pen' && (
+                        <DrawingPad
+                            key={`pen-${currentQuestionIndex}`}
+                            setResponse={setResponseState}
+                            setLatexPreview={setInput}
+                            onInputChange={(drawingOutput) => {
+                                console.log('Setting input value:', drawingOutput);
+                                setInput(drawingOutput);
+                            }}
+                        />
+                    )}
+
+                    <button
+                        type="submit"
+                        className="w-full py-2 rounded-lg font-semibold text-white transition-all duration-300 ease-in-out transform hover:scale-105"
+                        style={{ background: 'linear-gradient(to right, #3b82f6, #6366f1)' }}
                     >
-                        {Math.round(progress)}%
+                        Submit
+                    </button>
+                </form>
+
+                <div className="progress-section mt-6">
+                    <p className="font-semibold mb-2">Module Progress</p>
+                    <div className="w-full h-4 bg-gray-200 rounded-full overflow-hidden">
+                        <div
+                            className="h-full bg-gradient-to-r from-teal-400 to-green-500 text-white text-xs font-medium flex items-center justify-center transition-all duration-500 ease-in-out"
+                            style={{ width: `${progress}%` }}
+                        >
+                            {Math.round(progress)}%
+                        </div>
                     </div>
                 </div>
             </div>
@@ -269,8 +307,6 @@ const TutorInput = ({ module, userId }) => {
             </div>
         </div>
     );
-
-
 };
 
 export default TutorInput;
