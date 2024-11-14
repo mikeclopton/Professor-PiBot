@@ -41,14 +41,14 @@ function Learn() {
 
   return (
     <MathJaxContext>
-      <div className="grid grid-cols-2 gap-5 w-screen h-[80vh] p-5 text-white">
+      <div className="grid grid-cols-2 gap-5 w-screen h-[85vh] p-5 text-white">
         
         {/* TutorInput Section */}
         <div className="bg-gray-900 p-5 rounded-lg flex flex-col items-center overflow-hidden">
           <h2 className="text-lg font-semibold mb-4">
             Tutor & Input <i className="fas fa-pencil-alt"></i>
           </h2>
-          <div className="w-full h-[calc(100vh-200px)] overflow-y-auto">
+          <div className="w-full overflow-y-auto h-full">
             <TutorInput 
               setResponse={setResponse} 
               setLatexPreview={setLatexPreview} 
