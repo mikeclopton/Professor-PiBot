@@ -1,5 +1,6 @@
 import React, { useRef, useEffect, useState } from 'react';
 import axios from 'axios';
+import { MathJax, MathJaxContext } from 'better-react-mathjax';
 
 const DrawingPad = ({ setResponse, setLatexPreview, onInputChange }) => {
     const canvasRef = useRef(null);
@@ -84,11 +85,13 @@ const DrawingPad = ({ setResponse, setLatexPreview, onInputChange }) => {
                 >
                     Preview
                 </button>
-                {preview && (
-                    <div className="px-4 py-2 border border-gray-300 rounded-lg bg-blue-100 text-blue-700">
-                        <span>Detected: {preview}</span>
-                    </div>
-                )}
+                <MathJax>
+                    {preview && (
+                        <div className="px-4 py-2 border border-gray-300 rounded-lg bg-blue-100 text-blue-700">
+                            <span>Detected: {preview}</span>
+                        </div>
+                    )}
+                </MathJax>
             </div>
         </div>
     );

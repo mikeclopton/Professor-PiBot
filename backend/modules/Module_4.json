@@ -1,87 +1,84 @@
 {
-    "modules": {
-      "4": {
-        "title": "Sets and Logic",
-        "parts": {
-          "1": {
-            "questions": [
-              {
-                "number": 1,
-                "question": "Given the sets: A = {2, 3, {4}}, B = {3, 2, {4}}, C = {{4}, √9, 2}, D = {3, 2, 4}, E = {'apple', 'banana', {'cherry'}}, F = {x ∈ Z | 1 < x < 5}, (a) Specify which of the given sets are equal to each other. (b) For each set, determine the number of elements it contains. (c) Determine if the following statements are true or false: i. {4} ⊆ A, ii. {4} ⊆ D, iii. {'cherry'} ⊆ E, iv. {{4}} ⊆ C, v. {2, 3} ⊆ B",
-                "answer": {
-                  "a": "Sets A, B, and C are equal to each other. Sets D and F are also equal to each other.",
-                  "b": "A, B, C, D, E and F each have 3 elements.",
-                  "c": {
-                    "i": "False, {4} is an element of A, not a subset.",
-                    "ii": "True, {4} is a subset of D since 4 is an element of D.",
-                    "iii": "False, {'cherry'} is an element of E, not a subset. {{'cherry'}} will be a subset of E.",
-                    "iv": "True, {{4}} is a subset of C since {4} is an element of C.",
-                    "v": "True, {2, 3} is a subset of B since both 2 and 3 are elements of B."
-                  }
-                }
-              },
-              {
-                "number": 2,
-                "question": "Use the set-roster notation to write the following sets, and indicate the number of elements: (Z means the integers) (a) V = {t ∈ Z | t > −3 and t < 7}. (b) V = {t ∈ Z | t < −3 or t > 7}. (c) Let A = {p, q, r} and B = {x, y}, Find B × A",
-                "answer": {
-                  "a": "V = {−2, −1, 0, 1, 2, 3, 4, 5, 6}. 9 elements.",
-                  "b": "V = Z. Infinite elements.",
-                  "c": "B × A = {(x, p), (x, q), (x, r), (y, p), (y, q), (y, r)}. 6 elements."
-                }
-              },
-              {
-                "number": 3,
-                "question": "Let A = {m, n, o, p} and B = {g, h}. Use the set-roster notation to write each of the following sets, and indicate the number of elements that are in each set: (a) A × B (b) B × A (c) A × A (d) B × B",
-                "answer": {
-                  "a": "A × B = {(m, g), (m, h), (n, g), (n, h), (o, g), (o, h), (p, g), (p, h)}. 8 elements.",
-                  "b": "B × A = {(g, m), (g, n), (g, o), (g, p), (h, m), (h, n), (h, o), (h, p)}. 8 elements.",
-                  "c": "A × A = {(m, m), (m, n), (m, o), (m, p), (n, m), (n, n), (n, o), (n, p), (o, m), (o, n), (o, o), (o, p), (p, m), (p, n), (p, o), (p, p)}. 16 elements.",
-                  "d": "B × B = {(g, g), (g, h), (h, g), (h, h)}. 4 elements."
-                }
-              },
-              {
-                "number": 4,
-                "question": "Let A = {10, 11, 12} and B = {2, 3, 4}. Define a relation R from A to B as follows: For all (x, y) ∈ A × B, (x, y) ∈ R if and only if x/(y + 1) is an integer. (a) Write A × B in set-roster notation (b) Determine the validity of: i. Is 12 R 3? ii. Is (11, 4) ∈ R? (c) Write R as a set of ordered pairs. (d) Identify the domain and co-domain of R. (e) Is R a function, explain.",
-                "answer": {
-                  "a": "A × B = {(10, 2), (10, 3), (10, 4), (11, 2), (11, 3), (11, 4), (12, 2), (12, 3), (12, 4)}",
-                  "b": {
-                    "i": "12 R 3 is true since 12/(3+1) = 3, which is an integer",
-                    "ii": "(11, 4) ∈ R is false since 11/(4+1) = 2.2, which is not an integer"
-                  },
-                  "c": "R as a set of ordered pairs is {(10, 2), (12, 3)}",
-                  "d": "The domain of R is {10, 11, 12}, and the co-domain is {2, 3, 4}",
-                  "e": "R is not a function because not every element in the domain maps to exactly one element in the co-domain. For instance, 10 maps to 2, and 12 maps to 3."
-                }
-              },
-              {
-                "number": 5,
-                "question": "Write each statement in symbolic form. Let p = 'I enjoy programming', q = 'I will graduate', and r = 'I will complete my project.' Express propositions in symbolic form: (a) i. I enjoy programming and I will graduate. ii. I will complete my project or I will not graduate. iii. It is not true that I both enjoy programming and will complete my project. iv. I will not complete my project and I will not graduate.",
-                "answer": {
-                  "a": {
-                    "i": "p ∧ q",
-                    "ii": "r ∨ ¬q",
-                    "iii": "¬(p ∧ r)",
-                    "iv": "¬r ∧ ¬q"
-                  }
-                }
-              },
-              {
-                "number": 6,
-                "question": "Write the truth table for the following statement forms and determine if they are logically equivalent: (a) p ∨ (¬q ∧ r) (b) (p ∨ q) ∧ (¬p ∨ (q ∧ ¬r)) (c) Is p ∧ (p ∨ q) equivalent to p?",
-                "answer": {
-                  "a": "Truth table provided in solution key shows 8 rows with final column values: T,T,T,T,F,F,T,F",
-                  "b": "Truth table provided in solution key shows 8 rows with final column values: F,T,F,F,F,T,F,F",
-                  "c": "Yes, they are logically equivalent as shown by the truth table with all matching values: T,T,F,F"
-                }
-              },
-              {
-                "number": 7,
-                "question": "Expand the compound statement (p ⊕ q) ∧ r using the definition of Exclusive OR",
-                "answer": "(p ⊕ q) ∧ r ≡ ((p ∨ q)∧ ∼ (p ∧ q)) ∧ r ≡ ((p ∨ q) ∧ r)∧ ∼ ((p ∧ q) ∧ r)"
-              }
-            ]
-          }
+  "modules": {
+    "4": {
+      "title": "Demo Module",
+      "questions": [
+        {
+          "number": 1,
+          "question": "Input the identity matrix of size 2x2 using the matrix input feature.",
+          "answer": "\\begin{bmatrix} 1 & 0 \\\\ 0 & 1 \\end{bmatrix}"
+        },
+        {
+          "number": 2,
+          "question": "Enter the 3x3 identity matrix.",
+          "answer": "\\begin{bmatrix} 1 & 0 & 0 \\\\ 0 & 1 & 0 \\\\ 0 & 0 & 1 \\end{bmatrix}"
+        },
+        {
+          "number": 3,
+          "question": "Write the first four terms of the sequence defined by \\( a_k = \\frac{3k}{k + 2} \\) for integers \\( k \\geq 1 \\).",
+          "answer": "[1, 1.5, 1.8, 2]"
+        },
+        {
+          "number": 4,
+          "question": "Using the logical input, evaluate the expression \\( (p \\lor q) \\land \\neg r \\) when \\( p = true \\), \\( q = false \\), and \\( r = true \\).",
+          "answer": "false"
+        },
+        {
+          "number": 5,
+          "question": "Compute the sum \\( \\sum_{k=1}^4 k^2 \\).",
+          "answer": "30"
+        },
+        {
+          "number": 6,
+          "question": "Using the calculator keyboard, input the result of \\( 7 + 5 \\times 3 \\).",
+          "answer": "22"
+        },
+        {
+          "number": 7,
+          "question": "Determine if the expression \\( p \\lor \\neg p \\) is a tautology (always true). Answer 'true' or 'false'.",
+          "answer": "true"
+        },
+        {
+          "number": 8,
+          "question": "Calculate the binomial coefficient \\( \\binom{6}{2} \\) using the LaTeX input.",
+          "answer": "15"
+        },
+        {
+          "number": 9,
+          "question": "Compute the value of \\( 3^3 + 2^4 \\).",
+          "answer": "41"
+        },
+        {
+          "number": 10,
+          "question": "If matrix \\( B = \\begin{bmatrix} 2 & -1 \\\\ 3 & 4 \\end{bmatrix} \\), input the result of multiplying B by 3.",
+          "answer": "\\begin{bmatrix} 6 & -3 \\\\ 9 & 12 \\end{bmatrix}"
+        },
+        {
+          "number": 11,
+          "question": "Enter the negation of the statement: 'All students are enrolled in a math class.'",
+          "answer": "Not all students are enrolled in a math class."
+        },
+        {
+          "number": 12,
+          "question": "Write the sum of the first 5 positive integers.",
+          "answer": "15"
+        },
+        {
+          "number": 13,
+          "question": "Evaluate the predicate \\( Q(x): x^2 < 10 \\) for \\( x = 2 \\). Answer 'true' or 'false'.",
+          "answer": "true"
+        },
+        {
+          "number": 14,
+          "question": "Use the discrete math keyboard to simplify the expression \\( (p \\land q) \\lor (p \\land \\neg q) \\).",
+          "answer": "p"
+        },
+        {
+          "number": 15,
+          "question": "Find the explicit formula for the sequence with terms: 2, 5, 10, 17, 26.",
+          "answer": "a_n = n^2 + 1"
         }
-      }
+      ]
     }
   }
+}
