@@ -12,7 +12,7 @@ export default function Home() {
     <div className="flex flex-col items-center bg-gray-900 h-[90vh]">
       {/* Hero Section */}
       <section className="w-full bg-gray-800 text-white py-16 px-6 text-center">
-        <h1 className="text-4xl font-bold mb-4">Welcome to the Discrete Math AI Tutor</h1>
+        <h1 className="text-4xl font-bold mb-4">Welcome to Professor PiBot</h1>
         <p className="text-lg mb-6">Your personal AI tutor for mastering discrete mathematics.</p>
         <button
           onClick={handleGetStarted}
@@ -24,9 +24,9 @@ export default function Home() {
 
       {/* Introduction Section */}
       <section className="w-full max-w-4xl text-center py-12 px-6">
-        <h2 className="text-2xl font-semibold mb-4 text-gray-300">About the Tutor</h2>
+        <h2 className="text-2xl font-semibold mb-4 text-gray-300">About Professor PiBot</h2>
         <p className="text-gray-400 text-lg mb-6">
-          Our AI tutor offers interactive lessons, practice questions, and real-time feedback to help you understand and excel in discrete math.
+          Professor PiBot offers interactive lessons, practice questions, and real-time feedback to help you understand and excel in discrete math.
         </p>
       </section>
 
@@ -48,7 +48,7 @@ export default function Home() {
 
       {/* Footer Section */}
       <footer className="w-full bg-gray-700 text-white text-center py-4">
-        <p>&copy; 2024 Discrete Math AI Tutor. All rights reserved.</p>
+        <p>&copy; 2024 Professor PiBot. All rights reserved.</p>
       </footer>
     </div>
   );
