@@ -9,7 +9,7 @@ export default function Home() {
   };
 
   return (
-    <div className="flex flex-col items-center bg-gray-900 min-h-screen">
+    <div className="flex flex-col items-center bg-gray-900 h-[90vh]">
       {/* Hero Section */}
       <section className="w-full bg-gray-800 text-white py-16 px-6 text-center">
         <h1 className="text-4xl font-bold mb-4">Welcome to the Discrete Math AI Tutor</h1>
