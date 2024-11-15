@@ -172,11 +172,24 @@ def get_user_info():
 
     try:
         # Fetch the user from Supabase
-        result = supabase.table('users').select('username, email').eq('id', user_id).single().execute()
-        user = result.data
+        user_result = supabase.table('users').select('id, username, email').eq('id', user_id).single().execute()
+        user = user_result.data
 
         if user:
-            return jsonify({'user': user, 'user_id': user_id}), 200
+            # Fetch progress for the user
+            progress_result = supabase.table('progress').select('module_id, progress, completion_status').eq('user_id', user_id).execute()
+            progress_data = progress_result.data or []
+
+            # Map progress data to include module names
+            module_ids = [item['module_id'] for item in progress_data]
+            modules_result = supabase.table('modules').select('id, module_name').in_('id', module_ids).execute()
+            modules = {module['id']: module['module_name'] for module in modules_result.data or []}
+
+            for item in progress_data:
+                item['module_name'] = modules.get(item['module_id'], 'Unknown Module')
+                item['completion_percentage'] = int(item['progress'] * 100)
+
+            return jsonify({'user': user, 'progress': progress_data}), 200
         else:
             return jsonify({'error': 'User not found'}), 404
     except Exception as e:

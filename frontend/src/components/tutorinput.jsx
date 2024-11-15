@@ -16,6 +16,7 @@ const TutorInput = ({ module, userId }) => {
     const [error, setError] = useState(null);
     const [image, setImage] = useState(null);
     const [answeredQuestions, setAnsweredQuestions] = useState([]); // Track which questions are correctly answered
+    
 
     useEffect(() => {
         const fetchQuestions = async () => {
@@ -173,17 +174,20 @@ const TutorInput = ({ module, userId }) => {
         <MathJaxContext>
             <div className="p-6 bg-gray-800 text-gray-100 rounded-lg shadow-lg transition-all duration-300 ease-in-out h-full flex flex-col justify-between overflow-auto">
                 <div>
-                    <MathJax><h2 className="text-2xl font-semibold mb-4 font-sans transition-transform duration-300 ease-in-out">{questions[currentQuestionIndex]?.question || 'Loading...'}</h2></MathJax>
-                    <MathJax>
-                        <p
+                <MathJax key={`latex-${currentQuestionIndex}`}>
+                    <h2 className="text-2xl font-semibold mb-4 font-sans transition-transform duration-300 ease-in-out">
+                        {questions[currentQuestionIndex]?.question || 'Loading...'}
+                    </h2>
+                </MathJax>
+                <MathJax key={`response-${response}`}>
+                    <p
                         className={`${
                             response.includes("Correct!") ? "text-green-500" : response.includes("Incorrect") ? "text-red-500" : "text-gray-600"
                         } mb-4`}
-                        >
+                    >
                         {response}
-                        </p>
-                    </MathJax>
-
+                    </p>
+                </MathJax>
 
                     <form onSubmit={handleSubmit} className="space-y-4">
                         <div className="flex space-x-4">
