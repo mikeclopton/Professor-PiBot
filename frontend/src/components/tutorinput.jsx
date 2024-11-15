@@ -192,7 +192,7 @@ const TutorInput = ({ module, userId }) => {
 
                 <form onSubmit={handleSubmit} className="space-y-4">
                     <div className="flex space-x-4">
-                        {['latex', 'photo', 'pen'].map(type => (
+                        {['latex', 'photo', 'pen'].map((type) => (
                             <label key={type} className="flex items-center space-x-2">
                                 <input
                                     type="radio"
@@ -207,13 +207,15 @@ const TutorInput = ({ module, userId }) => {
                     </div>
 
                     {submissionType === 'latex' && (
-                        <math-field
-                            key={`latex-${currentQuestionIndex}`}
-                            value={input}
-                            onInput={(evt) => setInput(evt.target.value)}
-                            placeholder="Enter Answer Here"
-                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        />
+                        <div className="flex items-center justify-center w-full">
+                            <math-field
+                                key={`latex-${currentQuestionIndex}`}
+                                value={input}
+                                onInput={(evt) => setInput(evt.target.value)}
+                                placeholder="Enter Answer Here"
+                                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            />
+                        </div>
                     )}
                     {submissionType === 'photo' && (
                         <div className="flex items-center justify-center w-full">
@@ -267,14 +269,21 @@ const TutorInput = ({ module, userId }) => {
                         />
                     )}
 
-                    <button
-                        type="submit"
-                        className="w-full py-2 rounded-lg font-semibold text-white transition-all duration-300 ease-in-out transform hover:scale-105"
-                        style={{ background: 'linear-gradient(to right, #3b82f6, #6366f1)' }}
-                    >
-                        Submit
-                    </button>
+                    {/* New Button Integration */}
+                    <div className="flex items-center justify-center mt-6">
+                        <button className="relative inline-block p-px font-semibold leading-6 text-white bg-gray-800  cursor-pointer rounded-xl transition-transform duration-300 ease-in-out hover:scale-105 active:scale-95">
+                            <span className="absolute inset-0 rounded-xl bg-gradient-to-r from-teal-400 via-blue-500 to-purple-500 p-[2px] opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
+                            <span className="relative z-10 block px-6 py-3 rounded-xl bg-gray-950">
+                                <div className="relative z-10 flex items-center space-x-2">
+                                    <span className="transition-all duration-500 group-hover:translate-x-1">
+                                        Submit
+                                    </span>
+                                </div>
+                            </span>
+                        </button>
+                    </div>
                 </form>
+
 
                 <div className="progress-section mt-6">
                     <p className="font-semibold mb-2">Module Progress</p>
@@ -293,18 +302,48 @@ const TutorInput = ({ module, userId }) => {
                 <button
                     onClick={prevQuestion}
                     disabled={currentQuestionIndex === 0}
-                    className={`py-2 px-4 rounded-lg transform transition-transform duration-300 ${currentQuestionIndex === 0 ? 'bg-gray-300' : 'bg-blue-500 text-white hover:bg-blue-600 hover:scale-105'}`}
+                    className={`relative inline-block p-px font-semibold leading-6 text-white bg-gray-800 rounded-xl transition-transform duration-300 ${
+                        currentQuestionIndex === 0
+                            ? 'cursor-not-allowed opacity-50'
+                            : 'cursor-pointer hover:scale-105 active:scale-95'
+                    }`}
                 >
-                    Previous
+                    <span
+                        className={`absolute inset-0 rounded-xl bg-gradient-to-r from-teal-400 via-blue-500 to-purple-500 p-[2px] ${
+                            currentQuestionIndex === 0 ? 'opacity-50' : 'opacity-0 group-hover:opacity-100'
+                        }`}
+                    />
+                    <span className="relative z-10 block px-6 py-3 rounded-xl bg-gray-950">
+                        <div className="relative z-10 flex items-center space-x-2">
+                            <span className="transition-all duration-500 group-hover:translate-x-1">
+                                Previous
+                            </span>
+                        </div>
+                    </span>
                 </button>
+
                 <button
                     onClick={nextQuestion}
                     disabled={currentQuestionIndex === questions.length - 1}
-                    className={`py-2 px-4 rounded-lg transform transition-transform duration-300 ${currentQuestionIndex === questions.length - 1 ? 'bg-gray-300' : 'bg-blue-500 text-white hover:bg-blue-600 hover:scale-105'}`}
+                    className={`relative inline-block p-px font-semibold leading-6 text-white bg-gray-800 rounded-xl transition-transform duration-300 ${
+                        currentQuestionIndex === questions.length - 1
+                            ? 'cursor-not-allowed opacity-50'
+                            : 'cursor-pointer hover:scale-105 active:scale-95'
+                    }`}
                 >
-                    Next
+                    <span
+                        className={`absolute inset-0 rounded-xl bg-gradient-to-r from-teal-400 via-blue-500 to-purple-500 p-[2px] ${
+                            currentQuestionIndex === questions.length - 1 ? 'opacity-50' : 'opacity-0 group-hover:opacity-100'
+                        }`}
+                    />
+                    <span className="relative z-10 block px-6 py-3 rounded-xl bg-gray-950">
+                        <div className="relative z-10 flex items-center space-x-2">
+                            <span className="transition-all duration-500 group-hover:translate-x-1">Next</span>
+                        </div>
+                    </span>
                 </button>
             </div>
+
         </div>
     );
 };
