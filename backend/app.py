@@ -192,12 +192,11 @@ def logout():
 
 
 
-# Serve module JSON files dynamically
 @app.route('/api/getmodule', methods=['GET'])
 def get_module():
     module_number = request.args.get('module')
     try:
-        # Use os.path.join to safely construct the path to the module file
+        # Construct the path to the module file
         module_path = os.path.join('modules', f'Module_{module_number}.json')
         
         print(f"Fetching module from: {module_path}")  # Debugging line
@@ -223,6 +222,7 @@ def get_module():
     except Exception as e:
         print(f"Error loading module: {e}")  # Debugging line
         return jsonify({'error': 'An error occurred while loading the module'}), 500
+
 
 
 
@@ -416,4 +416,3 @@ def update_progress():
 # Run the Flask app
 if __name__ == '__main__':
     app.run(debug=True)
-
