@@ -3,23 +3,34 @@ import { useNavigate } from 'react-router-dom';
 
 const ModuleSelection = () => {
   const navigate = useNavigate();
-  const [modules] = useState(["1: Counting and Probability", "2: Matrix Input Practice", "3: Sequences and Summations", "4: Demo Module", "5: Advanced Discrete Math Problems", "6: Discrete Math Practice", "7: Mixed Review Of All Modules"]);
+  const [modules] = useState([1, 2, 3, 4, 5, 6, 7]);
+  const moduleTitles = {
+    1: "Counting and Probability",
+    2: "Matrix Input Practice",
+    3: "Sequences and Summations",
+    4: "Demo Module",
+    5: "Advanced Discrete Math Problems",
+    6: "Discrete Math Practice",
+    7: "Mixed Review Of All Modules",
+  };
+
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
   const handleModuleSelect = async (selectedModule) => {
     if (loading) return; // Prevent double clicks
-    
-    setLoading(true);
-    setError(null); // Reset error on each new request
 
+    setLoading(true);
     try {
+      // Only fetch module data once
       const response = await fetch(`/api/getmodule?module=${selectedModule}`);
-      if (!response.ok) throw new Error('Failed to fetch module');
+      if (!response.ok) throw new Error("Failed to fetch module");
+
+      // Navigate after successful fetch
       navigate(`/learn?module=${selectedModule}&part=1`);
     } catch (error) {
-      console.error('Error loading module:', error);
-      setError('Failed to load module. Please try again.');
+      console.error("Error loading module:", error);
+      setError(error.message);
     } finally {
       setLoading(false);
     }
@@ -38,7 +49,7 @@ const ModuleSelection = () => {
                 onClick={() => handleModuleSelect(module)}
                 disabled={loading}
               >
-                {loading ? "Loading..." : `Module ${module}`}
+                {loading ? "Loading..." : `Module ${module}: ${moduleTitles[module]}`}
               </button>
             </li>
           ))}
@@ -49,3 +60,4 @@ const ModuleSelection = () => {
 };
 
 export default ModuleSelection;
+
