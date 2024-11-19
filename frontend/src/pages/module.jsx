@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 
 const ModuleSelection = () => {
   const navigate = useNavigate();
-  const [modules] = useState([1, 2, 3, 4, 5, 6, 7]);
+  const [modules] = useState(["1: Counting and Probability", "2: Matrix Input Practice", "3: Sequences and Summations", "4: Demo Module", "5: Advanced Discrete Math Problems", "6: Discrete Math Practice", "7: Mixed Review Of All Modules"]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
