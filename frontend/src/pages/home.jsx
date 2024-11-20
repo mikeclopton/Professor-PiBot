@@ -47,7 +47,7 @@ export default function Home() {
           A smarter way to learn discrete math. With interactive lessons, tailored exercises, and AI-powered guidance, we ensure you excel with confidence.
         </p>
         <button
-          onClick={handleGetStarted}
+          onClick={handleModules}
           className="bg-blue-500 hover:bg-blue-600 px-6 py-3 rounded-md font-medium text-white"
         >
           Explore Modules
