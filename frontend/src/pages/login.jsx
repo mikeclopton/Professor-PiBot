@@ -15,9 +15,9 @@ function Login() {
             const response = await fetch('http://127.0.0.1:5000/api/login', {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ email, password })
+                body: JSON.stringify({ email, password }),
             });
 
             const data = await response.json();
@@ -36,21 +36,20 @@ function Login() {
 
     return (
         <div className="relative py-3 sm:max-w-xl sm:mx-auto w-full">
-            <div className="relative px-4 py-10 bg-black mx-8 md:mx-0 shadow rounded-3xl sm:p-10">
+            <div className="relative px-4 py-10 bg-gray-900 mx-8 md:mx-0 shadow rounded-3xl sm:p-10">
                 <div className="max-w-md mx-auto text-white">
-                   
-                    <h2 className="text-2xl font-bold text-center text-white mb-6">
+                    <h2 className="text-2xl font-bold text-center mb-6">
                         Welcome Back!
                     </h2>
-                  
+
                     <div className="mt-5">
                         {errorMessage && <p className="text-red-500 text-sm">{errorMessage}</p>}
                         <form onSubmit={handleLogin}>
-                            <label htmlFor="email" className="font-semibold text-sm text-gray-400 pb-1 block">E-mail</label>
+                            <label htmlFor="email" className="font-semibold text-sm text-gray-400 pb-1 block">Email</label>
                             <input
                                 id="email"
                                 type="email"
-                                className="border rounded-lg px-3 py-2 mt-1 mb-5 text-sm w-full bg-gray-700 text-white focus:border-blue-500 focus:ring-4 focus:ring-blue-500"
+                                className="border rounded-lg px-3 py-2 mt-1 mb-5 text-sm w-full bg-gray-800 text-white focus:border-blue-500 focus:ring-4 focus:ring-blue-500"
                                 placeholder="Email"
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
@@ -60,14 +59,14 @@ function Login() {
                             <input
                                 id="password"
                                 type="password"
-                                className="border rounded-lg px-3 py-2 mt-1 mb-5 text-sm w-full bg-gray-700 text-white focus:border-blue-500 focus:ring-4 focus:ring-blue-500"
+                                className="border rounded-lg px-3 py-2 mt-1 mb-5 text-sm w-full bg-gray-800 text-white focus:border-blue-500 focus:ring-4 focus:ring-blue-500"
                                 placeholder="Password"
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
                                 required
                             />
-                            <div className="text-right mb-4">
-                                <Link to="/forgot-password" className="text-xs font-display font-semibold text-gray-500 hover:text-gray-400 cursor-pointer">
+                            <div className="flex justify-center items-center mb-5">
+                                <Link to="/forgot-password" className="text-xs font-semibold text-gray-400 hover:text-gray-300">
                                     Forgot Password?
                                 </Link>
                             </div>
@@ -80,7 +79,8 @@ function Login() {
                                 </button>
                             </div>
                             <p className="text-center text-gray-400 text-sm mt-4">
-                                Don’t have an account? <Link to="/register" className="text-blue-500">Register here</Link>
+                                Don’t have an account?{' '}
+                                <Link to="/register" className="text-blue-500">Register here</Link>
                             </p>
                         </form>
                     </div>
