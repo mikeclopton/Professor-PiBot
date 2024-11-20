@@ -49,9 +49,19 @@ function Dashboard() {
     }
 
     return (
-        <div className="max-w-4xl mx-auto my-8 p-6 bg-gray-900 rounded-lg shadow-lg space-y-6">
+        <div className="relative max-w-4xl mx-auto my-8 p-6 bg-gray-900 rounded-lg shadow-lg space-y-6">
+            {/* Artistic Background Elements */}
+            <div className="absolute inset-0 -z-10 pointer-events-none">
+                <svg className="absolute top-10 left-10 w-72 h-72 opacity-40" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+                    <path d="M0,100 Q50,0 100,100 T200,100" fill="none" stroke="red" strokeWidth="2" />
+                </svg>
+                <svg className="absolute bottom-10 right-10 w-72 h-72 opacity-40" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+                    <path d="M0,100 Q50,0 100,100 T200,100" fill="none" stroke="red" strokeWidth="2" />
+                </svg>
+            </div>
+
             {/* User Information Section */}
-            <div className="bg-gray-800 p-6 rounded-lg shadow-md">
+            <div className="relative bg-gray-800 p-6 rounded-lg shadow-[0px_4px_15px_rgba(0,0,0,0.8)]">
                 <h3 className="text-2xl font-semibold text-white mb-4 flex items-center">
                     <i className="fas fa-user mr-2"></i>
                     Your Information
@@ -87,7 +97,7 @@ function Dashboard() {
             </div>
 
             {/* Progress Section */}
-            <div className="bg-gray-800 p-6 rounded-lg shadow-md">
+            <div className="relative bg-gray-800 p-6 rounded-lg shadow-[0px_4px_15px_rgba(0,0,0,0.8)]">
                 <h3 className="text-2xl font-semibold text-white mb-4 flex items-center">
                     <i className="fas fa-chart-line mr-2"></i>
                     Your Progress

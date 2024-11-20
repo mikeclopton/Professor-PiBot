@@ -4,7 +4,7 @@ import DrawingPad from './DrawingPad';
 import "https://unpkg.com/mathlive";
 import { MathJax, MathJaxContext } from 'better-react-mathjax';
 
-const TutorInput = ({ module, userId }) => {
+const Course = ({ module, userId }) => {
     const [submissionType, setSubmissionType] = useState('latex');
     const [input, setInput] = useState('');
     const [questions, setQuestions] = useState([]);
@@ -172,7 +172,19 @@ const TutorInput = ({ module, userId }) => {
 
     return (
         <MathJaxContext>
+            
             <div className="p-6 bg-gray-800 text-gray-100 rounded-lg shadow-lg transition-all duration-300 ease-in-out h-full flex flex-col justify-between overflow-auto">
+            <div className="progress-section mt-6">
+                        <p className="font-semibold mb-2">Module Progress</p>
+                        <div className="w-full h-4 bg-gray-200 rounded-full overflow-hidden">
+                            <div
+                                className="h-full bg-gradient-to-r from-teal-400 to-green-500 text-white text-xs font-medium flex items-center justify-center transition-all duration-500 ease-in-out"
+                                style={{ width: `${progress}%` }}
+                            >
+                                {Math.round(progress)}%
+                            </div>
+                        </div>
+                    </div>
                 <div>
                 <MathJax key={`latex-${currentQuestionIndex}`}>
                     <h2 className="text-2xl font-semibold mb-4 font-sans transition-transform duration-300 ease-in-out">
@@ -189,22 +201,42 @@ const TutorInput = ({ module, userId }) => {
                     </p>
                 </MathJax>
 
+                <div className="flex space-x-4 mt-4">
+                    <button
+                        className="relative inline-block px-4 py-2 font-semibold text-white bg-gray-700 rounded-lg shadow-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-transform duration-200"
+                    >
+                        Don't Know?
+                    </button>
+                    <button
+                        className="relative inline-block px-4 py-2 font-semibold text-white bg-gray-700 rounded-lg shadow-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-transform duration-200"
+                    >
+                        Hint
+                    </button>
+                </div>
+
                     <form onSubmit={handleSubmit} className="space-y-4">
-                        <div className="flex space-x-4">
+                        <div className="flex space-x-2 border-[3px] border-purple-400 rounded-xl select-none">
                             {['latex', 'photo', 'pen'].map((type) => (
-                                <label key={type} className="flex items-center space-x-2">
+                                <label
+                                    key={type}
+                                    className="radio flex flex-grow items-center justify-center rounded-lg p-1 cursor-pointer"
+                                >
                                     <input
                                         type="radio"
                                         value={type}
                                         checked={submissionType === type}
                                         onChange={handleTypeChange}
-                                        className="form-radio text-blue-600"
+                                        name="submissionType"
+                                        className="peer hidden"
                                     />
-                                    <span className="capitalize">{type}</span>
+                                    <span className={`tracking-widest peer-checked:bg-gradient-to-r peer-checked:from-[blueviolet] peer-checked:to-[violet] peer-checked:text-white text-gray-700 p-2 rounded-lg transition duration-150 ease-in-out capitalize`}>
+                                        {type}
+                                    </span>
                                 </label>
                             ))}
                         </div>
 
+                        {/* Conditional Render Based on Submission Type */}
                         {submissionType === 'latex' && (
                             <div className="flex items-center justify-center w-full">
                                 <math-field
@@ -225,10 +257,10 @@ const TutorInput = ({ module, userId }) => {
                                     <div className="flex flex-col items-center justify-center pt-5 pb-6">
                                         <svg
                                             className="w-8 h-8 mb-4 text-gray-500 dark:text-gray-400"
-                                            aria-hidden="true"
                                             xmlns="http://www.w3.org/2000/svg"
                                             fill="none"
                                             viewBox="0 0 20 16"
+                                            aria-hidden="true"
                                         >
                                             <path
                                                 stroke="currentColor"
@@ -242,7 +274,7 @@ const TutorInput = ({ module, userId }) => {
                                             <span className="font-semibold">Click to upload</span> or drag and drop
                                         </p>
                                         <p className="text-xs text-gray-500 dark:text-gray-400">
-                                            SVG, PNG, JPG or GIF (MAX. 800x400px)
+                                            SVG, PNG, JPG, or GIF (MAX. 800x400px)
                                         </p>
                                     </div>
                                     <input
@@ -255,7 +287,6 @@ const TutorInput = ({ module, userId }) => {
                                 </label>
                             </div>
                         )}
-
                         {submissionType === 'pen' && (
                             <DrawingPad
                                 key={`pen-${currentQuestionIndex}`}
@@ -282,19 +313,6 @@ const TutorInput = ({ module, userId }) => {
                             </button>
                         </div>
                     </form>
-
-
-                    <div className="progress-section mt-6">
-                        <p className="font-semibold mb-2">Module Progress</p>
-                        <div className="w-full h-4 bg-gray-200 rounded-full overflow-hidden">
-                            <div
-                                className="h-full bg-gradient-to-r from-teal-400 to-green-500 text-white text-xs font-medium flex items-center justify-center transition-all duration-500 ease-in-out"
-                                style={{ width: `${progress}%` }}
-                            >
-                                {Math.round(progress)}%
-                            </div>
-                        </div>
-                    </div>
                 </div>
 
                 <div className="flex justify-between mt-4">
@@ -348,4 +366,4 @@ const TutorInput = ({ module, userId }) => {
     );
 };
 
-export default TutorInput;
+export default Course;

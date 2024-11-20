@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { MathJaxContext } from 'better-react-mathjax';
-import TutorInput from '../components/tutorinput';
+import Course from '../components/Course';
 import Output from '../components/output';
 import Chat from '../components/Chat';
 import axios from 'axios';
@@ -43,13 +43,10 @@ function Learn() {
     <MathJaxContext>
       <div className="grid grid-cols-2 gap-5 w-screen h-[85vh] p-5 text-white">
         
-        {/* TutorInput Section */}
+        {/* Course Section */}
         <div className="bg-gray-900 p-5 rounded-lg flex flex-col items-center overflow-hidden">
-          <h2 className="text-lg font-semibold mb-4">
-            Tutor & Input <i className="fas fa-pencil-alt"></i>
-          </h2>
           <div className="w-full overflow-y-auto h-full">
-            <TutorInput 
+            <Course 
               setResponse={setResponse} 
               setLatexPreview={setLatexPreview} 
               module={module} 
@@ -61,7 +58,7 @@ function Learn() {
         
         {/* Chat Section */}
         <div className="bg-gray-900 p-5 rounded-lg flex flex-col overflow-hidden">
-          <h2 className="text-lg font-semibold mb-4">
+          <h2 className="text-lg font-semibold mb-4 text-center">
             Chat With Tutor <i className="fas fa-eye"></i>
           </h2>
           <div className="flex-1 h-[calc(100vh-200px)] overflow-y-auto">

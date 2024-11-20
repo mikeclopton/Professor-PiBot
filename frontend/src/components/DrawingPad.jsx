@@ -62,8 +62,8 @@ const DrawingPad = ({ setResponse, setLatexPreview, onInputChange }) => {
         <div className="flex flex-col items-center gap-4">
             <canvas
                 ref={canvasRef}
-                width={400}
-                height={400}
+                width={800}
+                height={200}
                 className="border border-gray-700 bg-white"
                 onMouseDown={startDrawing}
                 onMouseMove={draw}
