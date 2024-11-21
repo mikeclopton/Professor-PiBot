@@ -96,6 +96,28 @@ def validate_mathematical_expressions(user_input, correct_answer, input_type='la
         print(f"Validation error: {str(e)}")
         return False
 
+def normalize_answer(answer):
+    """
+    Normalize both LaTeX and regular answers for comparison
+    """
+    if isinstance(answer, str):
+        # Remove whitespace, backslashes, and make lowercase
+        answer = answer.lower().replace(' ', '')
+        answer = answer.replace('\\\\', '') # Handle LaTeX line breaks
+        answer = answer.replace('\\', '')    # Handle other LaTeX commands
+        answer = answer.replace('{', '').replace('}', '')
+        answer = answer.replace('[', '').replace(']', '')
+        answer = answer.replace('matrix', '')
+        answer = answer.replace('begin', '').replace('end', '')
+        # Convert decimal numbers to a standard format
+        try:
+            numbers = re.findall(r'-?\d*\.?\d+', answer)
+            for num in numbers:
+                formatted_num = f"{float(num):.3f}"
+                answer = answer.replace(num, formatted_num)
+        except:
+            pass
+    return answer
 
 # Serve the frontend
 @app.route('/', defaults={'path': ''})
@@ -272,35 +294,28 @@ def get_tutor_response():
 def process_input():
     data = request.json
     user_input = data.get('input', '')
+    correct_answer = data.get('correctAnswer', '')
     submission_type = data.get('submissionType', '')
-    context = data.get('context', None)
-
-    if submission_type == 'chat':
-        try:
-            # Build prompt with context if available
-            prompt = user_input
-            if context:
-                prompt = f"""Previous topic: {context.get('topic', '')}
-                Last question: {context.get('lastQuestion', '')}
-                Last response: {context.get('lastResponse', '')}
-                
-                Current question: {user_input}"""
-
-            # Get response from your AI processing function
-            solution = solve_problem_with_validation(prompt)
-            
-            # Try to identify the topic being discussed
-            topic = "mathematics"  # You can make this more sophisticated
-            
-            return jsonify({
-                'response': solution,
-                'topic': topic
-            })
-        except Exception as e:
-            print(f"Error in chat processing: {str(e)}")
-            return jsonify({
-                'response': 'I apologize, but I had trouble processing that question. Could you rephrase it?'
-            })
+    
+    if submission_type == 'validation':
+        # Normalize both input and correct answer
+        normalized_input = normalize_answer(user_input)
+        normalized_correct = normalize_answer(correct_answer)
+        
+        print(f"Normalized input: {normalized_input}")
+        print(f"Normalized correct: {normalized_correct}")
+        
+        # Check for equality
+        is_correct = normalized_input == normalized_correct
+        
+        # For debugging
+        if not is_correct:
+            print(f"Original input: {user_input}")
+            print(f"Original correct answer: {correct_answer}")
+            print(f"Normalized input: {normalized_input}")
+            print(f"Normalized correct: {normalized_correct}")
+        
+        return jsonify({'isCorrect': is_correct})
 
     if submission_type == 'validation':
         correct_answer = data.get('correctAnswer', '')
