@@ -10,25 +10,24 @@ const Course = ({ module, userId }) => {
     const [questions, setQuestions] = useState([]);
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
     const [aiResponse, setAiResponse] = useState('');
-    const [response, setResponseState] = useState('');
+    const [responseState, setResponseState] = useState('');
     const [progress, setProgress] = useState(0);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [image, setImage] = useState(null);
-    const [answeredQuestions, setAnsweredQuestions] = useState([]); // Track which questions are correctly answered
-    
+    const [answeredQuestions, setAnsweredQuestions] = useState([]);
 
     useEffect(() => {
         const fetchQuestions = async () => {
-            setLoading(true); // Set loading to true at the start of fetching
+            setLoading(true);
             try {
                 const response = await axios.get(`http://127.0.0.1:5000/api/getmodule?module=${module}`);
                 
                 if (response.data && response.data.questions) {
-                    // Only update questions if the module data matches the requested module
                     setQuestions(response.data.questions);
-                    setAnsweredQuestions(Array(response.data.questions.length).fill(false)); // Initialize answers
-                    setError(null); // Reset any previous error
+                    setAnsweredQuestions(new Array(response.data.questions.length).fill(false));
+                    setProgress(0);
+                    setError(null);
                 } else {
                     setError("Error: Module not found or questions are missing.");
                 }
@@ -36,55 +35,56 @@ const Course = ({ module, userId }) => {
                 console.error('Error fetching questions:', err);
                 setError('Failed to fetch questions.');
             } finally {
-                setLoading(false); // End loading state
+                setLoading(false);
             }
         };
-    
-        // Clear previous questions and call fetch
-        setQuestions([]); // Clear questions before fetching new ones
+
+        setQuestions([]);
         fetchQuestions();
     }, [module]);
-    
+
+    useEffect(() => {
+        if (questions.length > 0) {
+            const correctAnswers = answeredQuestions.filter(Boolean).length;
+            const newProgress = (correctAnswers / questions.length) * 100;
+            setProgress(newProgress);
+        }
+    }, [answeredQuestions, questions]);
 
     const calculateProgress = () => {
-        const correctAnswersCount = answeredQuestions.filter(Boolean).length;
-        const newProgress = (correctAnswersCount / questions.length) * 100;
-        setProgress(newProgress);
+        if (!questions.length) return 0;
+        const correctAnswers = answeredQuestions.filter(Boolean).length;
+        return (correctAnswers / questions.length) * 100;
     };
 
-    const updateProgressInBackend = async () => {
+    const updateProgressInBackend = async (newProgress) => {
+        if (!userId) return;
+
         try {
-            const data = {
-                user_id: userId,
-                module_id: module,
-                progress: progress / 100 // Send progress as a decimal (0.14 for 14%)
-            };
-            const res = await axios.post('/api/update-progress', data);
-            if (res.status === 200) {
-                console.log("Progress updated successfully");
-            } else {
-                console.error("Error updating progress:", res.data);
-            }
+            await fetch('/api/update-progress', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    user_id: userId,
+                    module_id: module,
+                    progress: newProgress / 100
+                })
+            });
         } catch (error) {
-            console.error("Error updating progress:", error);
+            console.error('Error updating progress:', error);
         }
     };
 
     const handleSubmit = async (event) => {
         event.preventDefault();
-        if (questions.length === 0) {
-            setResponseState("Error: Questions not loaded yet.");
-            return;
-        }
-
-        const currentQuestionData = questions[currentQuestionIndex];
-        if (!currentQuestionData) {
-            setResponseState("Error: Question data not found.");
-            return;
-        }
-
+        
+        const currentQuestion = questions[currentQuestionIndex];
+        if (!currentQuestion) return;
+    
         let processedInput = input;
-
+    
         if (submissionType === 'photo' && image) {
             try {
                 const photoResponse = await axios.post('http://127.0.0.1:5000/api/process-drawing', {
@@ -99,49 +99,43 @@ const Course = ({ module, userId }) => {
                 return;
             }
         }
-
+    
         try {
-            const validationResponse = await axios.post('http://127.0.0.1:5000/api/process', {
+            const response = await axios.post('http://127.0.0.1:5000/api/process', {
                 input: processedInput,
-                correctAnswer: currentQuestionData.answer,
+                correctAnswer: currentQuestion.answer,
                 submissionType: 'validation',
                 inputType: submissionType
             });
-
-            const isCorrect = validationResponse.data.isCorrect;
+    
+            const isCorrect = response.data.isCorrect;
+            
             setResponseState(isCorrect 
-                ? "Correct!"
-                : `Incorrect. The correct answer is: ${currentQuestionData.answer}`
+                ? "Correct!" 
+                : `Incorrect. The correct answer is: ${currentQuestion.answer}`
             );
-
-            if (isCorrect && !answeredQuestions[currentQuestionIndex]) {
-                // Only update progress if this question was not previously answered correctly
-                const updatedAnswers = [...answeredQuestions];
-                updatedAnswers[currentQuestionIndex] = true;
-                setAnsweredQuestions(updatedAnswers);
-
-                calculateProgress();
-                await updateProgressInBackend();
+    
+            if (isCorrect) {
+                // Create new array with current question marked as correct
+                const newAnsweredQuestions = [...answeredQuestions];
+                if (!newAnsweredQuestions[currentQuestionIndex]) {
+                    newAnsweredQuestions[currentQuestionIndex] = true;
+                    
+                    // Update answered questions first
+                    setAnsweredQuestions(newAnsweredQuestions);
+                    
+                    // Calculate new progress immediately using the updated array
+                    const correctAnswers = newAnsweredQuestions.filter(Boolean).length;
+                    const newProgress = (correctAnswers / questions.length) * 100;
+                    
+                    // Update progress state and backend
+                    setProgress(newProgress);
+                    await updateProgressInBackend(newProgress);
+                }
             }
         } catch (error) {
             console.error('Error validating answer:', error);
             setResponseState('Error validating your answer. Please try again.');
-        }
-    };
-
-    const nextQuestion = () => {
-        if (currentQuestionIndex < questions.length - 1) {
-            setCurrentQuestionIndex(currentQuestionIndex + 1);
-            setInput('');
-            setResponseState('');
-        }
-    };
-
-    const prevQuestion = () => {
-        if (currentQuestionIndex > 0) {
-            setCurrentQuestionIndex(currentQuestionIndex - 1);
-            setInput('');
-            setResponseState('');
         }
     };
 
@@ -167,52 +161,68 @@ const Course = ({ module, userId }) => {
         }
     };
 
+    const nextQuestion = () => {
+        if (currentQuestionIndex < questions.length - 1) {
+            setCurrentQuestionIndex(currentQuestionIndex + 1);
+            setInput('');
+            setResponseState('');
+        }
+    };
+
+    const prevQuestion = () => {
+        if (currentQuestionIndex > 0) {
+            setCurrentQuestionIndex(currentQuestionIndex - 1);
+            setInput('');
+            setResponseState('');
+        }
+    };
+
     if (loading) return <div className="text-center">Loading questions...</div>;
     if (error) return <div className="text-center text-red-500">{error}</div>;
 
     return (
         <MathJaxContext>
-            
             <div className="p-6 bg-gray-800 text-gray-100 rounded-lg shadow-lg transition-all duration-300 ease-in-out h-full flex flex-col justify-between overflow-auto">
-            <div className="progress-section mt-6">
-                        <p className="font-semibold mb-2">Module Progress</p>
-                        <div className="w-full h-4 bg-gray-200 rounded-full overflow-hidden">
-                            <div
-                                className="h-full bg-gradient-to-r from-teal-400 to-green-500 text-white text-xs font-medium flex items-center justify-center transition-all duration-500 ease-in-out"
-                                style={{ width: `${progress}%` }}
-                            >
-                                {Math.round(progress)}%
-                            </div>
+                <div className="progress-section mt-6">
+                    <p className="font-semibold mb-2">Module Progress</p>
+                    <div className="w-full h-4 bg-gray-200 rounded-full overflow-hidden">
+                        <div
+                            className="h-full bg-gradient-to-r from-teal-400 to-green-500 text-white text-xs font-medium flex items-center justify-center transition-all duration-500 ease-in-out"
+                            style={{ width: `${progress}%` }}
+                        >
+                            {Math.round(progress)}%
                         </div>
                     </div>
-                <div>
-                <MathJax key={`latex-${currentQuestionIndex}`}>
-                    <h2 className="text-2xl font-semibold mb-4 font-sans transition-transform duration-300 ease-in-out">
-                        {questions[currentQuestionIndex]?.question || 'Loading...'}
-                    </h2>
-                </MathJax>
-                <MathJax key={`response-${response}`}>
-                    <p
-                        className={`${
-                            response.includes("Correct!") ? "text-green-500" : response.includes("Incorrect") ? "text-red-500" : "text-gray-600"
-                        } mb-4`}
-                    >
-                        {response}
-                    </p>
-                </MathJax>
-
-                <div className="flex space-x-4 mt-4">
-                    <button
-                        className="relative inline-block px-4 py-2 font-semibold text-white bg-gray-700 rounded-lg shadow-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-transform duration-200"
-                    >
-                        Don't Know?
-                    </button>
-                    <button
-                        className="relative inline-block px-4 py-2 font-semibold text-white bg-gray-700 rounded-lg shadow-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-transform duration-200"
-                    >
-                        Hint
-                    </button>
                 </div>
+
+                <div>
+                    <MathJax key={`latex-${currentQuestionIndex}`}>
+                        <h2 className="text-2xl font-semibold mb-4 font-sans transition-transform duration-300 ease-in-out">
+                            {questions[currentQuestionIndex]?.question || 'Loading...'}
+                        </h2>
+                    </MathJax>
+                    <MathJax key={`response-${responseState}`}>
+                        <p
+                            className={`${
+                                responseState.includes("Correct!") ? "text-green-500" : responseState.includes("Incorrect") ? "text-red-500" : "text-gray-600"
+                            } mb-4`}
+                        >
+                            {responseState}
+                        </p>
+                    </MathJax>
+
+                    <div className="flex space-x-4 mt-4">
+                        <button
+                            className="relative inline-block px-4 py-2 font-semibold text-white bg-gray-700 rounded-lg shadow-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-transform duration-200"
+                        >
+                            Don't Know?
+                        </button>
+                        <button
+                            className="relative inline-block px-4 py-2 font-semibold text-white bg-gray-700 rounded-lg shadow-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-transform duration-200"
+                        >
+                            Hint
+                        </button>
+                    </div>
 
                     <form onSubmit={handleSubmit} className="space-y-4">
                         <div className="flex space-x-2 border-[3px] border-purple-400 rounded-xl select-none">
@@ -236,7 +246,6 @@ const Course = ({ module, userId }) => {
                             ))}
                         </div>
 
-                        {/* Conditional Render Based on Submission Type */}
                         {submissionType === 'latex' && (
                             <div className="flex items-center justify-center w-full">
                                 <math-field
@@ -248,6 +257,7 @@ const Course = ({ module, userId }) => {
                                 />
                             </div>
                         )}
+
                         {submissionType === 'photo' && (
                             <div className="flex items-center justify-center w-full">
                                 <label
@@ -287,6 +297,7 @@ const Course = ({ module, userId }) => {
                                 </label>
                             </div>
                         )}
+
                         {submissionType === 'pen' && (
                             <DrawingPad
                                 key={`pen-${currentQuestionIndex}`}
@@ -299,9 +310,10 @@ const Course = ({ module, userId }) => {
                             />
                         )}
 
-                        {/* New Button Integration */}
                         <div className="flex items-center justify-center mt-6">
-                            <button className="relative inline-block p-px font-semibold leading-6 text-white bg-gray-800  cursor-pointer rounded-xl transition-transform duration-300 ease-in-out hover:scale-105 active:scale-95">
+                            <button 
+                                type="submit"
+                                className="relative inline-block p-px font-semibold leading-6 text-white bg-gray-800 cursor-pointer rounded-xl transition-transform duration-300 ease-in-out hover:scale-105 active:scale-95">
                                 <span className="absolute inset-0 rounded-xl bg-gradient-to-r from-teal-400 via-blue-500 to-purple-500 p-[2px] opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
                                 <span className="relative z-10 block px-6 py-3 rounded-xl bg-gray-950">
                                     <div className="relative z-10 flex items-center space-x-2">

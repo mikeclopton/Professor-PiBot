@@ -393,30 +393,36 @@ def update_progress():
     data = request.json
     user_id = data.get('user_id')
     module_id = data.get('module_id')
-    progress = data.get('progress')  # Progress will be passed as a percentage (e.g., 0.5 for 50%)
+    progress = data.get('progress')  # This will be a decimal (e.g., 0.75 for 75%)
 
-    if not user_id or not module_id or progress is None:
-        print(f"Missing data - User ID: {user_id}, Module ID: {module_id}, Progress: {progress}")
+    if not all([user_id, module_id, progress is not None]):
         return jsonify({'error': 'Missing required data'}), 400
 
     try:
-        # Check if the user already has progress in this module
-        result = supabase.table('progress').select('*').eq('user_id', user_id).eq('module_id', module_id).execute()
+        # Check if progress record exists
+        result = supabase.table('progress').select('*')\
+            .eq('user_id', user_id)\
+            .eq('module_id', module_id)\
+            .execute()
+        
         existing_progress = result.data
 
         if existing_progress:
-            # Update existing progress
-            supabase.table('progress').update({
-                'progress': progress,
-                'completion_status': progress >= 1.0
-            }).eq('user_id', user_id).eq('module_id', module_id).execute()
+            # Only update if new progress is higher than existing progress
+            if progress > existing_progress[0]['progress']:
+                supabase.table('progress').update({
+                    'progress': progress,
+                    'completion_status': progress >= 1.0  # Mark as complete if 100%
+                }).eq('user_id', user_id)\
+                  .eq('module_id', module_id)\
+                  .execute()
         else:
-            # Insert new progress record
+            # Create new progress record
             supabase.table('progress').insert({
                 'user_id': user_id,
                 'module_id': module_id,
                 'progress': progress,
-                'completion_status': progress >= 1.0  # If progress is 100%, mark as complete
+                'completion_status': progress >= 1.0
             }).execute()
 
         return jsonify({'message': 'Progress updated successfully'}), 200
