@@ -44,6 +44,15 @@ const Course = ({ module, userId }) => {
     }, [module]);
 
     useEffect(() => {
+        if (window.MathJax) {
+            window.MathJax.typesetPromise()
+                .then(() => console.log("MathJax re-rendered successfully"))
+                .catch((err) => console.error("MathJax re-render failed:", err));
+        }
+    }, [questions, currentQuestionIndex]);
+    
+
+    useEffect(() => {
         if (questions.length > 0) {
             const correctAnswers = answeredQuestions.filter(Boolean).length;
             const newProgress = (correctAnswers / questions.length) * 100;

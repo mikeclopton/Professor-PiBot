@@ -1,8 +1,6 @@
 import React, { useState, useRef } from "react";
-import { useNavigate } from "react-router-dom";
 
 const ModuleSelection = () => {
-  const navigate = useNavigate();
   const [modules] = useState([1, 2, 3, 4, 5, 6, 7]);
   const moduleTitles = {
     1: "Counting and Probability",
@@ -23,57 +21,46 @@ const ModuleSelection = () => {
     7: "A mixed review of all modules to test your overall knowledge.",
   };
 
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
-  const [hoveredModule, setHoveredModule] = useState(null); // Track hovered module
-  const [fadeStyle, setFadeStyle] = useState({ opacity: 0, transform: "translateX(-10px)" }); // Style for fade-in/out
-  const hoverTimeout = useRef(null); // Track hover timeout to handle fast transitions
+  const [hoveredModule, setHoveredModule] = useState(null);
+  const [fadeStyle, setFadeStyle] = useState({
+    opacity: 0,
+    transform: "translateX(-10px)",
+  });
+  const hoverTimeout = useRef(null);
 
-  const handleModuleSelect = async (selectedModule) => {
-    if (loading) return;
-    setLoading(true);
-
-    try {
-      const response = await fetch(`/api/getmodule?module=${selectedModule}`);
-      if (!response.ok) throw new Error("Failed to fetch module");
-
-      navigate(`/learn?module=${selectedModule}&part=1`);
-    } catch (error) {
-      console.error("Error loading module:", error);
-      setError(error.message);
-    } finally {
-      setLoading(false);
-    }
+  const handleModuleSelect = (selectedModule) => {
+    // Reload the page with the selected module
+    window.location.href = `/learn?module=${selectedModule}&part=1`;
   };
 
   const handleMouseEnter = (module) => {
-    if (hoverTimeout.current) clearTimeout(hoverTimeout.current); // Clear any existing timeouts
+    if (hoverTimeout.current) clearTimeout(hoverTimeout.current);
 
     setHoveredModule(module);
     setFadeStyle({
-      opacity: 0, // Start invisible
-      transform: "translateX(-10px)", // Start slightly offset
+      opacity: 0,
+      transform: "translateX(-10px)",
     });
 
     hoverTimeout.current = setTimeout(() => {
       setFadeStyle({
-        opacity: 1, // Fade in
-        transform: "translateX(0)", // Move to position
-        transition: "opacity 0.3s ease-in-out, transform 0.3s ease-in-out", // Smooth transition
+        opacity: 1,
+        transform: "translateX(0)",
+        transition: "opacity 0.3s ease-in-out, transform 0.3s ease-in-out",
       });
-    }, 50); // Small delay to trigger transition
+    }, 50);
   };
 
   const handleMouseLeave = () => {
-    if (hoverTimeout.current) clearTimeout(hoverTimeout.current); // Clear any existing timeouts
+    if (hoverTimeout.current) clearTimeout(hoverTimeout.current);
 
     setFadeStyle({
-      opacity: 0, // Fade out
-      transform: "translateX(-10px)", // Slide out
-      transition: "opacity 0.3s ease-in-out, transform 0.3s ease-in-out", // Smooth transition
+      opacity: 0,
+      transform: "translateX(-10px)",
+      transition: "opacity 0.3s ease-in-out, transform 0.3s ease-in-out",
     });
 
-    hoverTimeout.current = setTimeout(() => setHoveredModule(null), 300); // Remove module after fade-out completes
+    hoverTimeout.current = setTimeout(() => setHoveredModule(null), 300);
   };
 
   return (
@@ -81,8 +68,7 @@ const ModuleSelection = () => {
       <div
         className="inline-flex flex-col items-center p-8 text-center relative"
         style={{
-          background:
-            "linear-gradient(145deg, #1f2937, #2d3748)", // Gradient background
+          background: "linear-gradient(145deg, #1f2937, #2d3748)",
           border: "1px solid #374151",
           borderRadius: "12px",
           boxShadow: "0 8px 15px rgba(0, 0, 0, 0.2)",
@@ -94,20 +80,6 @@ const ModuleSelection = () => {
         >
           Select a Module
         </h2>
-        {error && (
-          <p
-            className="mb-4"
-            style={{
-              color: "#EF4444",
-              backgroundColor: "rgba(239, 68, 68, 0.1)",
-              padding: "0.5rem 1rem",
-              borderRadius: "8px",
-              fontWeight: "bold",
-            }}
-          >
-            {error}
-          </p>
-        )}
         <ul className="list-none p-0 w-full">
           {modules.map((module) => (
             <li
@@ -129,14 +101,10 @@ const ModuleSelection = () => {
                   transition: "all 0.3s ease",
                 }}
                 onClick={() => handleModuleSelect(module)}
-                disabled={loading && hoveredModule === module}
               >
-                {loading && hoveredModule === module
-                  ? "Loading..."
-                  : `Module ${module}: ${moduleTitles[module]}`}
+                Module {module}: {moduleTitles[module]}
               </button>
 
-              {/* Description Panel */}
               {hoveredModule === module && (
                 <div
                   className="absolute top-0 left-full ml-12 w-64 p-4 rounded-lg shadow-lg"
@@ -145,7 +113,7 @@ const ModuleSelection = () => {
                     color: "#F3F4F6",
                     textAlign: "left",
                     zIndex: 10,
-                    ...fadeStyle, // Apply dynamic fade style
+                    ...fadeStyle,
                   }}
                 >
                   <h4 className="font-bold mb-2">Module Description</h4>
