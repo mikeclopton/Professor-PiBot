@@ -294,6 +294,7 @@ def get_tutor_response():
 def process_input():
     data = request.json
     user_input = data.get('input', '')
+    correct_answer = data.get('correctAnswer', '')
     submission_type = data.get('submissionType', '')
     context = data.get('context', {})
     message_type = context.get('messageType', 'regular')
