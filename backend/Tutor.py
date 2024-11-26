@@ -54,3 +54,64 @@ def solve_problem_with_validation(problem, submission_type=None):
         return f"{tutor_solution}\n\nNote: Solution needs review."
     
     return tutor_solution
+
+def solve_problem_with_hint(problem, hint_number=1):
+    """Generate a sequential hint for the problem"""
+    
+    # More general progressive hint prompts
+    hint_prompts = {
+        1: """Give a brief initial hint that helps identify the type of problem and 
+            the key concept needed. Don't solve anything yet, just help them recognize 
+            what mathematical concept or approach they should consider.""",
+        2: """Building on the concept identified, give a hint about the first concrete 
+            step they should take to start solving this problem.""",
+        3: """Assuming they've started the problem, provide guidance on what to do next, 
+            focusing on the key operation or calculation needed at this stage.""",
+        4: """Give a final hint that helps them complete the solution, suggesting how 
+            to combine their work into a final answer."""
+    }
+
+    conversation_history = [
+        {'role': 'system', 'content': f"""You are a discrete mathematics tutor providing 
+        the hint #{hint_number} of a step-by-step solution. Your hints should:
+        - Build logically on previous hints
+        - Be specific to this exact problem
+        - Reveal just enough to guide without giving away the full solution
+        - Focus on understanding rather than just calculation
+        Current hint focus: {hint_prompts[hint_number]}"""},
+        {'role': 'user', 'content': f"Give hint #{hint_number} for this problem: {problem}"}
+    ]
+    
+    response = requests.post(
+        api_url,
+        headers=headers,
+        json={
+            'model': 'gpt-4o',
+            'messages': conversation_history,
+            'max_tokens': 750,
+            'temperature': 0.7
+        }
+    )
+    
+    return response.json().get('choices', [{}])[0].get('message', {}).get('content', '')
+
+def solve_problem_with_full_answer(problem):
+    """Generate a complete step-by-step solution"""
+    conversation_history = [
+        {'role': 'system', 'content': """You are a math tutor. Provide a complete 
+        step-by-step solution to this problem. Break down your explanation into clear steps."""},
+        {'role': 'user', 'content': f"Solve this problem: {problem}"}
+    ]
+    
+    response = requests.post(
+        api_url,
+        headers=headers,
+        json={
+            'model': 'gpt-4o',
+            'messages': conversation_history,
+            'max_tokens': 750,
+            'temperature': 0.7
+        }
+    )
+    
+    return response.json().get('choices', [{}])[0].get('message', {}).get('content', '')

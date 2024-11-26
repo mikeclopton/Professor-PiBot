@@ -4,7 +4,7 @@ import DrawingPad from './DrawingPad';
 import "https://unpkg.com/mathlive";
 import { MathJax, MathJaxContext } from 'better-react-mathjax';
 
-const Course = ({ module, userId }) => {
+const Course = ({ module, userId, sendToChatTutor, setResponse, setLatexPreview, part }) => {
     const [submissionType, setSubmissionType] = useState('latex');
     const [input, setInput] = useState('');
     const [questions, setQuestions] = useState([]);
@@ -16,6 +16,7 @@ const Course = ({ module, userId }) => {
     const [error, setError] = useState(null);
     const [image, setImage] = useState(null);
     const [answeredQuestions, setAnsweredQuestions] = useState([]);
+    const [hintCount, setHintCount] = useState(1);
 
     useEffect(() => {
         const fetchQuestions = async () => {
@@ -186,6 +187,32 @@ const Course = ({ module, userId }) => {
         }
     };
 
+    const handleDontKnow = () => {
+        const currentQuestion = questions[currentQuestionIndex];
+        if (!currentQuestion) return;
+        
+        const message = `I need help solving this question: ${currentQuestion.question}`;
+        sendToChatTutor(message, 'fullAnswer');
+    };
+
+    const handleHint = () => {
+        const currentQuestion = questions[currentQuestionIndex];
+        if (!currentQuestion) return;
+        
+        const hintRequests = [
+            "Can you give me a hint for this question?",
+            "I'd like another hint for this problem.",
+            "Could you give me the next hint?",
+            "I need one more hint for this."
+        ];
+
+        const requestPhrase = hintRequests[Math.min(hintCount - 1, hintRequests.length - 1)];
+        const message = `${requestPhrase} ${currentQuestion.question}`;
+        
+        sendToChatTutor(message, 'hint');
+        setHintCount(prev => Math.min(prev + 1, hintRequests.length));
+    };
+    
     if (loading) return <div className="text-center">Loading questions...</div>;
     if (error) return <div className="text-center text-red-500">{error}</div>;
 
@@ -222,11 +249,13 @@ const Course = ({ module, userId }) => {
 
                     <div className="flex space-x-4 mt-4">
                         <button
+                            onClick={handleDontKnow}
                             className="relative inline-block px-4 py-2 font-semibold text-white bg-gray-700 rounded-lg shadow-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-transform duration-200"
                         >
                             Don't Know?
                         </button>
                         <button
+                            onClick={handleHint}
                             className="relative inline-block px-4 py-2 font-semibold text-white bg-gray-700 rounded-lg shadow-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-transform duration-200"
                         >
                             Hint

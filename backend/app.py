@@ -6,7 +6,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 import json
 import os
 from dotenv import load_dotenv
-from Tutor import solve_problem_with_validation
+from Tutor import solve_problem_with_validation, solve_problem_with_hint, solve_problem_with_full_answer
 import requests
 import sympy
 from sympy.parsing.latex import parse_latex
@@ -296,6 +296,24 @@ def process_input():
     user_input = data.get('input', '')
     correct_answer = data.get('correctAnswer', '')
     submission_type = data.get('submissionType', '')
+    context = data.get('context', {})
+    message_type = context.get('messageType', 'regular')
+    hint_number = context.get('hintNumber', 1)  # Get hint number from context
+
+    if submission_type == 'chat':
+        if message_type == 'hint':
+            solution = solve_problem_with_hint(user_input, hint_number)
+            return jsonify({
+                'response': solution,
+                'type': message_type,
+                'nextHintNumber': min(hint_number + 1, 4)  # Cap at 4 hints
+            })
+        else:
+            solution = solve_problem_with_full_answer(user_input)
+            return jsonify({
+                'response': solution,
+                'type': message_type
+            })
     
     if submission_type == 'validation':
         # Normalize both input and correct answer
