@@ -1,12 +1,23 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { MathJax, MathJaxContext } from 'better-react-mathjax';
-import icon from '../assets/icon.png'; // Adjust the path based on your folder structure
+import icon from '../assets/icon.png';
 
-const Chat = ({ response }) => {
-    const [chatMessages, setChatMessages] = useState([]);
+const Chat = ({ response, latexPreview, messages, setMessages }) => {
     const [userInput, setUserInput] = useState('');
     const [loading, setLoading] = useState(false);
-    const [conversationContext, setConversationContext] = useState(null);
+    const [conversationContext, setConversationContext] = useState({
+        topic: null,
+        lastQuestion: null,
+        lastResponse: null,
+        currentHintNumber: 1
+    });
+
+    useEffect(() => {
+        if (messages.length > 0 && messages[messages.length - 1].sender === 'user') {
+            const lastMessage = messages[messages.length - 1];
+            handleSendMessage(lastMessage.text, lastMessage.type);
+        }
+    }, [messages]);
 
     const renderResponseWithLatex = (text) => {
         const sections = text.split(/###|(?=\*\*Step)/).filter(section => section.trim());
@@ -18,7 +29,7 @@ const Chat = ({ response }) => {
             let content = section.trim();
     
             if (content.startsWith('Step')) {
-                const stepNumber = content.match(/Step (\d+)/)[1];
+                const stepNumber = content.match(/Step (\d+)/)?.[1];
                 const stepTitle = content.split('\n')[0].replace(/^Step \d+:?\s*/, '').trim();
                 headerText = `Step ${stepNumber}: ${stepTitle}`;
                 content = content.split('\n').slice(1).join('\n').trim();
@@ -46,12 +57,15 @@ const Chat = ({ response }) => {
         }).filter(Boolean);
     };
 
-    const handleSendMessage = async () => {
-        if (!userInput.trim()) return;
-
-        setChatMessages([...chatMessages, { sender: 'user', text: userInput }]);
+    const handleSendMessage = async (message, type = 'regular') => {
+        const messageToSend = message || userInput;
+        if (!messageToSend.trim()) return;
+    
+        if (!message) {
+            setMessages([...messages, { sender: 'user', text: messageToSend }]);
+        }
         setLoading(true);
-
+    
         try {
             const response = await fetch('http://127.0.0.1:5000/api/process', {
                 method: 'POST',
@@ -59,29 +73,57 @@ const Chat = ({ response }) => {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    input: userInput,
+                    input: messageToSend,
                     submissionType: 'chat',
                     context: {
-                        previousMessages: chatMessages,
+                        previousMessages: messages,
                         currentTopic: conversationContext?.topic,
                         lastQuestion: conversationContext?.lastQuestion,
-                        lastResponse: conversationContext?.lastResponse
+                        lastResponse: conversationContext?.lastResponse,
+                        messageType: type,
+                        hintNumber: conversationContext.currentHintNumber
                     }
                 }),
             });
-
+    
             const data = await response.json();
             
-            setConversationContext({
-                topic: data.topic || conversationContext?.topic,
-                lastQuestion: userInput,
-                lastResponse: data.response
-            });
+            if (type === 'hint') {
+                setMessages(prev => [...prev, 
+                    { sender: 'ai', text: data.response },
+                    { 
+                        sender: 'ai', 
+                        text: conversationContext.currentHintNumber < 4 ? 
+                            'Would you like to see the next step? Click the hint button again.' : 
+                            'You\'ve seen all the hints! Try solving it now or click "Don\'t Know?" for the full solution.',
+                        isPrompt: true
+                    }
+                ]);
 
-            setChatMessages(prevMessages => [...prevMessages, { sender: 'ai', text: data.response }]);
+                // Update hint number for next time
+                setConversationContext(prev => ({
+                    ...prev,
+                    currentHintNumber: Math.min(prev.currentHintNumber + 1, 4),
+                    lastQuestion: messageToSend,
+                    lastResponse: data.response
+                }));
+            } else {
+                setMessages(prev => [...prev, { sender: 'ai', text: data.response }]);
+                // Reset hint count for new questions
+                setConversationContext({
+                    topic: data.topic || conversationContext?.topic,
+                    lastQuestion: messageToSend,
+                    lastResponse: data.response,
+                    currentHintNumber: 1
+                });
+            }
+    
         } catch (err) {
             console.error('Failed to fetch AI response:', err);
-            setChatMessages(prevMessages => [...prevMessages, { sender: 'ai', text: 'Unable to get response from AI.' }]);
+            setMessages(prev => [...prev, { 
+                sender: 'ai', 
+                text: 'Unable to get response from AI.' 
+            }]);
         } finally {
             setLoading(false);
             setUserInput('');
@@ -92,7 +134,7 @@ const Chat = ({ response }) => {
         <MathJaxContext>
             <div className="flex flex-col h-full">
                 <div className="flex-1 overflow-y-auto p-4 bg-gray-800 rounded-lg">
-                    {chatMessages.map((message, index) => (
+                    {messages.map((message, index) => (
                         <div key={index} className={`flex ${message.sender === 'ai' ? 'items-start' : 'items-end justify-end'} mb-2`}>
                             {message.sender === 'ai' ? (
                                 <>
@@ -108,7 +150,9 @@ const Chat = ({ response }) => {
                             ) : (
                                 <>
                                     <div className="bg-blue-500 p-3 rounded-lg">
-                                        <p className="text-sm text-white">{message.text}</p>
+                                        <p className="text-sm text-white">
+                                            <MathJax>{message.text}</MathJax>
+                                        </p>
                                     </div>
                                     <img
                                         src="https://s3.amazonaws.com/37assets/svn/765-default-avatar.png"
@@ -159,7 +203,12 @@ const Chat = ({ response }) => {
                         }}
                         className="flex-1 py-2 px-3 rounded-full bg-gray-100 focus:outline-none text-black"
                     />
-                    <button onClick={handleSendMessage} className="bg-blue-500 text-white px-4 py-2 rounded-full ml-3 hover:bg-blue-600">Send</button>
+                    <button 
+                        onClick={() => handleSendMessage()}
+                        className="bg-blue-500 text-white px-4 py-2 rounded-full ml-3 hover:bg-blue-600"
+                    >
+                        Send
+                    </button>
                 </div>
             </div>
         </MathJaxContext>

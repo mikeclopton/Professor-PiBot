@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { MathJaxContext } from 'better-react-mathjax';
 import Course from '../components/Course';
-import Output from '../components/output';
 import Chat from '../components/Chat';
 import axios from 'axios';
 import '@fortawesome/fontawesome-free/css/all.min.css';
@@ -14,6 +13,8 @@ function Learn() {
   const [module, setModule] = useState(1);
   const [part, setPart] = useState(1);
   const [userId, setUserId] = useState(null);
+  // Add new state for chat messages
+  const [chatMessages, setChatMessages] = useState([]);
 
   useEffect(() => {
     const queryParams = new URLSearchParams(location.search);
@@ -39,10 +40,18 @@ function Learn() {
     fetchUser();
   }, [location]);
 
+  // Function to send messages from Course to Chat
+  const sendToChatTutor = (message, type) => {
+    setChatMessages(prev => [...prev, {
+      sender: 'user',
+      text: message,
+      type: type // 'hint' or 'fullAnswer'
+    }]);
+  };
+
   return (
     <MathJaxContext>
       <div className="grid grid-cols-2 gap-5 w-screen h-[85vh] p-5 text-white">
-        
         {/* Course Section */}
         <div className="bg-gray-900 p-5 rounded-lg flex flex-col items-center overflow-hidden">
           <div className="w-full overflow-y-auto h-full">
@@ -52,6 +61,7 @@ function Learn() {
               module={module} 
               userId={userId} 
               part={part}
+              sendToChatTutor={sendToChatTutor}
             />
           </div>
         </div>
@@ -62,7 +72,12 @@ function Learn() {
             Chat With Tutor <i className="fas fa-eye"></i>
           </h2>
           <div className="flex-1 h-[calc(100vh-200px)] overflow-y-auto">
-            <Chat response={response} latexPreview={latexPreview} />
+            <Chat 
+              response={response}
+              latexPreview={latexPreview}
+              messages={chatMessages}
+              setMessages={setChatMessages}
+            />
           </div>
         </div>
       </div>
