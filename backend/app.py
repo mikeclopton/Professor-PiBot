@@ -96,6 +96,28 @@ def validate_mathematical_expressions(user_input, correct_answer, input_type='la
         print(f"Validation error: {str(e)}")
         return False
 
+def normalize_answer(answer):
+    """
+    Normalize both LaTeX and regular answers for comparison
+    """
+    if isinstance(answer, str):
+        # Remove whitespace, backslashes, and make lowercase
+        answer = answer.lower().replace(' ', '')
+        answer = answer.replace('\\\\', '') # Handle LaTeX line breaks
+        answer = answer.replace('\\', '')    # Handle other LaTeX commands
+        answer = answer.replace('{', '').replace('}', '')
+        answer = answer.replace('[', '').replace(']', '')
+        answer = answer.replace('matrix', '')
+        answer = answer.replace('begin', '').replace('end', '')
+        # Convert decimal numbers to a standard format
+        try:
+            numbers = re.findall(r'-?\d*\.?\d+', answer)
+            for num in numbers:
+                formatted_num = f"{float(num):.3f}"
+                answer = answer.replace(num, formatted_num)
+        except:
+            pass
+    return answer
 
 # Serve the frontend
 @app.route('/', defaults={'path': ''})
@@ -272,35 +294,28 @@ def get_tutor_response():
 def process_input():
     data = request.json
     user_input = data.get('input', '')
+    correct_answer = data.get('correctAnswer', '')
     submission_type = data.get('submissionType', '')
-    context = data.get('context', None)
-
-    if submission_type == 'chat':
-        try:
-            # Build prompt with context if available
-            prompt = user_input
-            if context:
-                prompt = f"""Previous topic: {context.get('topic', '')}
-                Last question: {context.get('lastQuestion', '')}
-                Last response: {context.get('lastResponse', '')}
-                
-                Current question: {user_input}"""
-
-            # Get response from your AI processing function
-            solution = solve_problem_with_validation(prompt)
-            
-            # Try to identify the topic being discussed
-            topic = "mathematics"  # You can make this more sophisticated
-            
-            return jsonify({
-                'response': solution,
-                'topic': topic
-            })
-        except Exception as e:
-            print(f"Error in chat processing: {str(e)}")
-            return jsonify({
-                'response': 'I apologize, but I had trouble processing that question. Could you rephrase it?'
-            })
+    
+    if submission_type == 'validation':
+        # Normalize both input and correct answer
+        normalized_input = normalize_answer(user_input)
+        normalized_correct = normalize_answer(correct_answer)
+        
+        print(f"Normalized input: {normalized_input}")
+        print(f"Normalized correct: {normalized_correct}")
+        
+        # Check for equality
+        is_correct = normalized_input == normalized_correct
+        
+        # For debugging
+        if not is_correct:
+            print(f"Original input: {user_input}")
+            print(f"Original correct answer: {correct_answer}")
+            print(f"Normalized input: {normalized_input}")
+            print(f"Normalized correct: {normalized_correct}")
+        
+        return jsonify({'isCorrect': is_correct})
 
     if submission_type == 'validation':
         correct_answer = data.get('correctAnswer', '')
@@ -393,30 +408,36 @@ def update_progress():
     data = request.json
     user_id = data.get('user_id')
     module_id = data.get('module_id')
-    progress = data.get('progress')  # Progress will be passed as a percentage (e.g., 0.5 for 50%)
+    progress = data.get('progress')  # This will be a decimal (e.g., 0.75 for 75%)
 
-    if not user_id or not module_id or progress is None:
-        print(f"Missing data - User ID: {user_id}, Module ID: {module_id}, Progress: {progress}")
+    if not all([user_id, module_id, progress is not None]):
         return jsonify({'error': 'Missing required data'}), 400
 
     try:
-        # Check if the user already has progress in this module
-        result = supabase.table('progress').select('*').eq('user_id', user_id).eq('module_id', module_id).execute()
+        # Check if progress record exists
+        result = supabase.table('progress').select('*')\
+            .eq('user_id', user_id)\
+            .eq('module_id', module_id)\
+            .execute()
+        
         existing_progress = result.data
 
         if existing_progress:
-            # Update existing progress
-            supabase.table('progress').update({
-                'progress': progress,
-                'completion_status': progress >= 1.0
-            }).eq('user_id', user_id).eq('module_id', module_id).execute()
+            # Only update if new progress is higher than existing progress
+            if progress > existing_progress[0]['progress']:
+                supabase.table('progress').update({
+                    'progress': progress,
+                    'completion_status': progress >= 1.0  # Mark as complete if 100%
+                }).eq('user_id', user_id)\
+                  .eq('module_id', module_id)\
+                  .execute()
         else:
-            # Insert new progress record
+            # Create new progress record
             supabase.table('progress').insert({
                 'user_id': user_id,
                 'module_id': module_id,
                 'progress': progress,
-                'completion_status': progress >= 1.0  # If progress is 100%, mark as complete
+                'completion_status': progress >= 1.0
             }).execute()
 
         return jsonify({'message': 'Progress updated successfully'}), 200
