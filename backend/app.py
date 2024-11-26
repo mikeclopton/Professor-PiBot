@@ -211,7 +211,7 @@ def get_user_info():
                 item['module_name'] = modules.get(item['module_id'], 'Unknown Module')
                 item['completion_percentage'] = int(item['progress'] * 100)
 
-            return jsonify({'user': user, 'progress': progress_data}), 200
+            return jsonify({'user': user, 'progress': progress_data, 'user_id': user_id}), 200
         else:
             return jsonify({'error': 'User not found'}), 404
     except Exception as e:
