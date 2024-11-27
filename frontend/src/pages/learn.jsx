@@ -69,7 +69,7 @@ function Learn() {
         {/* Chat Section */}
         <div className="bg-gray-900 p-5 rounded-lg flex flex-col overflow-hidden">
           <h2 className="text-lg font-semibold mb-4 text-center">
-            Chat With Tutor <i className="fas fa-eye"></i>
+            Learn with PiBot! <i className="fas fa-robot"></i>
           </h2>
           <div className="flex-1 h-[calc(100vh-200px)] overflow-y-auto">
             <Chat 

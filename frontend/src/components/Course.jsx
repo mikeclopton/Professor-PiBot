@@ -4,7 +4,7 @@ import DrawingPad from './DrawingPad';
 import "https://unpkg.com/mathlive";
 import { MathJax, MathJaxContext } from 'better-react-mathjax';
 
-const Course = ({ module, userId, sendToChatTutor, setResponse, setLatexPreview, part }) => {
+const Course = ({ module, userId, sendToChatTutor}) => {
     const [submissionType, setSubmissionType] = useState('latex');
     const [input, setInput] = useState('');
     const [questions, setQuestions] = useState([]);
@@ -61,11 +61,6 @@ const Course = ({ module, userId, sendToChatTutor, setResponse, setLatexPreview,
         }
     }, [answeredQuestions, questions]);
 
-    const calculateProgress = () => {
-        if (!questions.length) return 0;
-        const correctAnswers = answeredQuestions.filter(Boolean).length;
-        return (correctAnswers / questions.length) * 100;
-    };
 
     const updateProgressInBackend = async (newProgress) => {
         if (!userId) return;
