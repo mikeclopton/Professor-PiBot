@@ -8,8 +8,8 @@ import os
 from dotenv import load_dotenv
 from Tutor import solve_problem_with_validation, solve_problem_with_hint, solve_problem_with_full_answer
 import requests
-import sympy
-from sympy.parsing.latex import parse_latex
+from sympy import parse_expr
+import re
 
 # Load environment variables
 load_dotenv()
@@ -58,66 +58,160 @@ def normalize_math_expression(expr):
 
 def validate_mathematical_expressions(user_input, correct_answer, input_type='latex'):
     """
-    Compare two mathematical expressions for equivalence
+    Compare two mathematical expressions for equivalence, handling multiple formats
     """
+    
     try:
-        # First try basic string comparison after normalization
-        user_normalized = normalize_math_expression(user_input)
-        correct_normalized = normalize_math_expression(correct_answer)
+
+         # For sequences, try sequence comparison first
+        if ',' in user_input or ',' in correct_answer:
+            user_nums = normalize_sequence(user_input)
+            correct_nums = normalize_sequence(correct_answer)
+            
+            if len(user_nums) == len(correct_nums):
+                return all(abs(u - c) < 0.0001 for u, c in zip(user_nums, correct_nums))
+            
+        # First normalize both inputs
+        user_normalized = normalize_answer(user_input)
+        correct_normalized = normalize_answer(correct_answer)
         
+        # If they're exactly equal after normalization
         if user_normalized == correct_normalized:
             return True
             
-        # For numerical answers, try converting to float and compare
+        # For matrices
+        if '\\begin{' in correct_answer or '[[' in correct_answer:
+            return compare_matrices(user_normalized, correct_normalized)
+            
+        # For sequences/lists
+        if '[' in correct_answer or '(' in correct_answer:
+            return compare_sequences(user_normalized, correct_normalized)
+            
+        # For logical values
+        if correct_answer.lower() in ['true', 'false']:
+            return compare_logical_values(user_normalized, correct_normalized)
+            
+        # For numerical values
         try:
-            user_float = float(user_normalized)
-            correct_float = float(correct_normalized)
-            return abs(user_float - correct_float) < 1e-6  # Allow small numerical differences
+            user_float = float(user_normalized.replace(' ', ''))
+            correct_float = float(correct_normalized.replace(' ', ''))
+            return abs(user_float - correct_float) < 1e-6
         except ValueError:
             pass
-
-        # For symbolic expressions, try using sympy
-        try:
-            if input_type == 'latex':
-                user_expr = parse_latex(user_input)
-                correct_expr = parse_latex(correct_answer)
-            else:
-                user_expr = sympy.sympify(user_normalized)
-                correct_expr = sympy.sympify(correct_normalized)
             
-            difference = sympy.simplify(user_expr - correct_expr)
-            return difference == 0
-        except Exception as e:
-            print(f"Symbolic comparison error: {str(e)}")
+        # For algebraic expressions
+        try:
+            return compare_algebraic_expressions(user_normalized, correct_normalized)
+        except:
             pass
 
         return False
+
     except Exception as e:
         print(f"Validation error: {str(e)}")
         return False
 
 def normalize_answer(answer):
     """
-    Normalize both LaTeX and regular answers for comparison
+    Normalize answers for comparison
     """
     if isinstance(answer, str):
-        # Remove whitespace, backslashes, and make lowercase
+        # Remove spaces, backslashes, and make lowercase
         answer = answer.lower().replace(' ', '')
-        answer = answer.replace('\\\\', '') # Handle LaTeX line breaks
-        answer = answer.replace('\\', '')    # Handle other LaTeX commands
-        answer = answer.replace('{', '').replace('}', '')
-        answer = answer.replace('[', '').replace(']', '')
-        answer = answer.replace('matrix', '')
-        answer = answer.replace('begin', '').replace('end', '')
-        # Convert decimal numbers to a standard format
-        try:
-            numbers = re.findall(r'-?\d*\.?\d+', answer)
-            for num in numbers:
-                formatted_num = f"{float(num):.3f}"
-                answer = answer.replace(num, formatted_num)
-        except:
-            pass
+        answer = answer.replace('\\\\', '\\')  # Handle LaTeX line breaks
+        answer = answer.replace('\\begin{bmatrix}', '[[').replace('\\end{bmatrix}', ']]')
+        answer = answer.replace('\\begin{pmatrix}', '[[').replace('\\end{pmatrix}', ']]')
+        answer = answer.replace('\\begin{matrix}', '[[').replace('\\end{matrix}', ']]')
+        answer = answer.replace('true', '1').replace('false', '0')
+        answer = answer.replace('\\binom', 'C')
     return answer
+
+def compare_matrices(user_input, correct_answer):
+    """
+    Compare matrix representations
+    """
+    # Convert to standard format [[a,b],[c,d]]
+    user_matrix = extract_matrix_values(user_input)
+    correct_matrix = extract_matrix_values(correct_answer)
+    return user_matrix == correct_matrix
+
+def extract_matrix_values(matrix_str):
+    """
+    Extract numerical values from matrix string
+    """
+    # Remove all brackets and split by separator
+    values = matrix_str.replace('[', '').replace(']', '').replace('\\\\', ',').split(',')
+    # Convert to numbers and remove empty strings
+    return [float(v) for v in values if v.strip()]
+
+def normalize_sequence(seq_str):
+    """
+    Normalize sequence representation for comparison
+    """
+    try:
+        # Remove all whitespace and brackets
+        cleaned = seq_str.replace('[', '').replace(']', '').replace(' ', '')
+        
+        # Split into individual number strings
+        parts = cleaned.split(',')
+        
+        # Convert each part to a decimal number
+        numbers = []
+        for part in parts:
+            if '/' in part:
+                num, den = map(float, part.split('/'))
+                numbers.append(num/den)
+            else:
+                numbers.append(float(part))
+                
+        return numbers
+    except:
+        return []
+
+def compare_sequences(user_input, correct_answer):
+    """
+    Compare sequence/list representations with flexible formatting
+    """
+    user_seq = normalize_sequence(user_input)
+    correct_seq = normalize_sequence(correct_answer)
+    
+    # Check if lengths match
+    if len(user_seq) != len(correct_seq):
+        return False
+        
+    # Compare each number with small tolerance for floating point differences
+    for u, c in zip(user_seq, correct_seq):
+        if abs(u - c) > 1e-6:
+            return False
+            
+    return True
+
+def compare_logical_values(user_input, correct_answer):
+    """
+    Compare logical values
+    """
+    user_bool = user_input.strip() in ['1', 'true', 't']
+    correct_bool = correct_answer.strip() in ['1', 'true', 't']
+    return user_bool == correct_bool
+
+def compare_algebraic_expressions(user_input, correct_answer):
+    """
+    Compare algebraic expressions
+    """
+    # Convert common variables
+    user_input = user_input.replace('x', 'n')
+    correct_answer = correct_answer.replace('x', 'n')
+    
+    # Try symbolic comparison using sympy
+    try:
+        from sympy import simplify, symbols
+        n = symbols('n')
+        user_expr = parse_expr(user_input)
+        correct_expr = parse_expr(correct_answer)
+        return simplify(user_expr - correct_expr) == 0
+    except:
+        # If symbolic comparison fails, try string comparison
+        return user_input == correct_answer
 
 # Serve the frontend
 @app.route('/', defaults={'path': ''})
