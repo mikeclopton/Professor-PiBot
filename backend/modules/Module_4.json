@@ -11,7 +11,7 @@
         {
           "number": 2,
           "question": "Write the first four terms of the sequence defined by \\( a_k = \\frac{3k}{k + 2} \\) for integers \\( k \\geq 1 \\).",
-          "answer": "[1, 1.5, 1.8, 2]"
+          "answer": "1, 1.5, 1.8, 2"
         },
         {
           "number": 3,
@@ -45,7 +45,7 @@
         },
         {
           "number": 9,
-          "question": "Use the discrete math keyboard to simplify the expression \\( (p \\land q) \\lor (p \\land \\neg q) \\).",
+          "question": "Simplify the expression \\( (p \\land q) \\lor (p \\land \\neg q) \\).",
           "answer": "p"
         },
         {
