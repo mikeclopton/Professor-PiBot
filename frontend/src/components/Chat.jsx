@@ -12,13 +12,6 @@ const Chat = ({ response, latexPreview, messages, setMessages }) => {
         currentHintNumber: 1
     });
 
-    useEffect(() => {
-        if (messages.length > 0 && messages[messages.length - 1].sender === 'user') {
-            const lastMessage = messages[messages.length - 1];
-            handleSendMessage(lastMessage.text, lastMessage.type);
-        }
-    }, [messages]);
-
     const renderResponseWithLatex = (text) => {
         const sections = text.split(/###|(?=\*\*Step)/).filter(section => section.trim());
         
@@ -58,11 +51,13 @@ const Chat = ({ response, latexPreview, messages, setMessages }) => {
     };
 
     const handleSendMessage = async (message, type = 'regular') => {
+        console.log("handleSendMessage called with:", {message, type});
         const messageToSend = message || userInput;
         if (!messageToSend.trim()) return;
     
+        // Only add user message if it's coming from input field, not from buttons
         if (!message) {
-            setMessages([...messages, { sender: 'user', text: messageToSend }]);
+            setMessages(prev => [...prev, { sender: 'user', text: messageToSend }]);
         }
         setLoading(true);
     
@@ -77,30 +72,29 @@ const Chat = ({ response, latexPreview, messages, setMessages }) => {
                     submissionType: 'chat',
                     context: {
                         previousMessages: messages,
-                        currentTopic: conversationContext?.topic,
-                        lastQuestion: conversationContext?.lastQuestion,
-                        lastResponse: conversationContext?.lastResponse,
                         messageType: type,
-                        hintNumber: conversationContext.currentHintNumber
+                        hintNumber: type === 'hint' ? conversationContext.currentHintNumber : 1,
+                        lastQuestion: conversationContext.lastQuestion,
+                        lastResponse: conversationContext.lastResponse
                     }
                 }),
             });
     
             const data = await response.json();
             
+            // For hint type, maintain existing hint functionality
             if (type === 'hint') {
                 setMessages(prev => [...prev, 
                     { sender: 'ai', text: data.response },
                     { 
                         sender: 'ai', 
                         text: conversationContext.currentHintNumber < 4 ? 
-                            'Would you like to see the next step? Click the hint button again.' : 
+                            'Would you like another hint? Click the hint button again.' : 
                             'You\'ve seen all the hints! Try solving it now or click "Don\'t Know?" for the full solution.',
-                        isPrompt: true
+                        isPrompt: true 
                     }
                 ]);
-
-                // Update hint number for next time
+    
                 setConversationContext(prev => ({
                     ...prev,
                     currentHintNumber: Math.min(prev.currentHintNumber + 1, 4),
@@ -108,14 +102,15 @@ const Chat = ({ response, latexPreview, messages, setMessages }) => {
                     lastResponse: data.response
                 }));
             } else {
+                // For regular messages, just add one single response
                 setMessages(prev => [...prev, { sender: 'ai', text: data.response }]);
-                // Reset hint count for new questions
-                setConversationContext({
-                    topic: data.topic || conversationContext?.topic,
+                
+                setConversationContext(prev => ({
+                    ...prev,
+                    currentHintNumber: 1,
                     lastQuestion: messageToSend,
-                    lastResponse: data.response,
-                    currentHintNumber: 1
-                });
+                    lastResponse: data.response
+                }));
             }
     
         } catch (err) {
@@ -129,6 +124,13 @@ const Chat = ({ response, latexPreview, messages, setMessages }) => {
             setUserInput('');
         }
     };
+
+    useEffect(() => {
+        if (messages.length > 0 && messages[messages.length - 1].sender === 'user' && 
+            messages[messages.length - 1].type) {  // Only trigger for messages with a type (hint/don't know)
+            handleSendMessage(messages[messages.length - 1].text, messages[messages.length - 1].type);
+        }
+    }, [messages]);
 
     return (
         <MathJaxContext>

@@ -294,58 +294,40 @@ def get_tutor_response():
 def process_input():
     data = request.json
     user_input = data.get('input', '')
-    correct_answer = data.get('correctAnswer', '')
     submission_type = data.get('submissionType', '')
     context = data.get('context', {})
-    message_type = context.get('messageType', 'regular')
-    hint_number = context.get('hintNumber', 1)  # Get hint number from context
 
     if submission_type == 'chat':
+        message_type = context.get('messageType', 'regular')
+        hint_number = context.get('hintNumber', 1)
+        previous_messages = context.get('previousMessages', [])
+        
         if message_type == 'hint':
-            solution = solve_problem_with_hint(user_input, hint_number)
+            # Include conversation history in hint generation
+            solution = solve_problem_with_hint(user_input, hint_number, previous_messages)
             return jsonify({
                 'response': solution,
-                'type': message_type,
-                'nextHintNumber': min(hint_number + 1, 4)  # Cap at 4 hints
+                'type': message_type
             })
         else:
-            solution = solve_problem_with_full_answer(user_input)
+            # Include conversation history in full answer generation
+            solution = solve_problem_with_full_answer(user_input, previous_messages)
             return jsonify({
                 'response': solution,
                 'type': message_type
             })
     
     if submission_type == 'validation':
-        # Normalize both input and correct answer
-        normalized_input = normalize_answer(user_input)
-        normalized_correct = normalize_answer(correct_answer)
-        
-        print(f"Normalized input: {normalized_input}")
-        print(f"Normalized correct: {normalized_correct}")
-        
-        # Check for equality
-        is_correct = normalized_input == normalized_correct
-        
-        # For debugging
-        if not is_correct:
-            print(f"Original input: {user_input}")
-            print(f"Original correct answer: {correct_answer}")
-            print(f"Normalized input: {normalized_input}")
-            print(f"Normalized correct: {normalized_correct}")
-        
-        return jsonify({'isCorrect': is_correct})
-
-    if submission_type == 'validation':
         correct_answer = data.get('correctAnswer', '')
         input_type = data.get('inputType', 'latex')
-        
-        print(f"Comparing - User Input: '{user_input}' with Correct Answer: '{correct_answer}'")  # Add this debug line
         
         # Simple direct comparison first
         if str(user_input).strip() == str(correct_answer).strip():
             return jsonify({'isCorrect': True})
             
-        return jsonify({'isCorrect': False})
+        # If not exact match, try validation through formula comparison
+        is_correct = validate_mathematical_expressions(user_input, correct_answer, input_type)
+        return jsonify({'isCorrect': is_correct})
 
     try:
         # Store input in Supabase for record-keeping
@@ -357,7 +339,7 @@ def process_input():
     except Exception as e:
         print("Error storing input in Supabase:", str(e))
     
-    # Process the input using the MathTutorValidator
+    # Process the input using the validator
     solution = solve_problem_with_validation(user_input)
 
     return jsonify({'response': solution})
