@@ -85,16 +85,21 @@ const DrawingPad = ({ setResponse, setLatexPreview, onInputChange }) => {
                 >
                     Preview
                 </button>
-                <MathJax>
-                    {preview && (
-                        <div className="px-4 py-2 border border-gray-300 rounded-lg bg-blue-100 text-blue-700">
-                            <span>Detected: {preview}</span>
-                        </div>
-                    )}
-                </MathJax>
+                {preview && (
+                <div className="flex gap-4">
+                    <div className="px-4 py-2 border border-gray-300 rounded-lg bg-blue-100 text-blue-700">
+                        <span>Detected: {preview}</span>
+                    </div>
+                    <div className="px-4 py-2 border border-gray-300 rounded-lg bg-blue-100 text-blue-700">
+                        <MathJax>{`$$${preview}$$`}</MathJax>
+                    </div>
+                </div>
+            )}
             </div>
         </div>
+        
     );
 };
+
 
 export default DrawingPad;
