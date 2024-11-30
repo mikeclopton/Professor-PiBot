@@ -112,18 +112,32 @@ def validate_mathematical_expressions(user_input, correct_answer, input_type='la
         return False
 
 def normalize_answer(answer):
-    """
-    Normalize answers for comparison
-    """
+    """Normalize answers for comparison"""
     if isinstance(answer, str):
-        # Remove spaces, backslashes, and make lowercase
-        answer = answer.lower().replace(' ', '')
-        answer = answer.replace('\\\\', '\\')  # Handle LaTeX line breaks
-        answer = answer.replace('\\begin{bmatrix}', '[[').replace('\\end{bmatrix}', ']]')
-        answer = answer.replace('\\begin{pmatrix}', '[[').replace('\\end{pmatrix}', ']]')
-        answer = answer.replace('\\begin{matrix}', '[[').replace('\\end{matrix}', ']]')
-        answer = answer.replace('true', '1').replace('false', '0')
-        answer = answer.replace('\\binom', 'C')
+        # Handle array format from MathPix
+        answer = answer.replace('\\left[', '')
+        answer = answer.replace('\\right]', '')
+        answer = answer.replace('\\begin{array}{cc}', '')
+        answer = answer.replace('\\end{array}', '')
+        # Handle line breaks and separators
+        answer = answer.replace('\\\\', ',')
+        answer = answer.replace('&', ',')
+        # Remove whitespace and newlines
+        answer = ''.join(answer.split())
+        
+        # Extract only the numbers and separators
+        numbers = []
+        current_num = ''
+        for char in answer:
+            if char.isdigit() or char in '.-,':
+                current_num += char
+            elif current_num:
+                numbers.append(current_num)
+                current_num = ''
+        if current_num:
+            numbers.append(current_num)
+            
+        return ','.join(numbers)
     return answer
 
 def compare_matrices(user_input, correct_answer):
@@ -139,10 +153,31 @@ def extract_matrix_values(matrix_str):
     """
     Extract numerical values from matrix string
     """
-    # Remove all brackets and split by separator
-    values = matrix_str.replace('[', '').replace(']', '').replace('\\\\', ',').split(',')
-    # Convert to numbers and remove empty strings
-    return [float(v) for v in values if v.strip()]
+    try:
+        print(f"Original matrix string: {matrix_str}")
+        
+        # First clean up the matrix string
+        matrix_str = matrix_str.replace('\\left', '')
+        matrix_str = matrix_str.replace('\\right', '')
+        matrix_str = matrix_str.replace('\\begin{array}{cc}', '')
+        matrix_str = matrix_str.replace('\\end{array}', '')
+        matrix_str = matrix_str.replace('\\\\', ',')
+        matrix_str = matrix_str.replace('&', ',')
+        
+        print(f"After cleanup: {matrix_str}")
+        
+        # Split and clean
+        values = [val.strip() for val in matrix_str.split(',') if val.strip()]
+        print(f"After split: {values}")
+        
+        # Convert to numbers
+        numbers = [float(v) for v in values if v.replace('-', '').replace('.', '').isdigit()]
+        print(f"Final numbers: {numbers}")
+        
+        return numbers
+    except Exception as e:
+        print(f"Error extracting matrix values: {str(e)}")
+        return []
 
 def normalize_sequence(seq_str):
     """
