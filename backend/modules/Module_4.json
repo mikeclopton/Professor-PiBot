@@ -10,7 +10,7 @@
         },
         {
           "number": 2,
-          "question": "Write the first four terms of the sequence defined by \\( a_k = \\frac{3k}{k + 2} \\) for integers \\( k \\geq 1 \\).",
+          "question": "Write the first four terms of the sequence defined by \\( a_k = \\frac{3k}{k + 2} \\) for integers \\( k \\geq 1 \\) in decimal format.",
           "answer": "1, 1.5, 1.8, 2"
         },
         {
